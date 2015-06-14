@@ -243,6 +243,6 @@ public class Cohere {
         	logger.info(new String(b));
         }*/
         
-        FMLCommonHandler.instance().exitJava(0, true);
+        FMLCommonHandler.instance().exitJava(0, false);
     }
 }
