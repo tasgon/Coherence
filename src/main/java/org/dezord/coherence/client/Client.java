@@ -25,7 +25,6 @@ public class Client {
 	
 	public static void ClientInit(ServerAddress servaddr) {
 		logger.info("Initializing Coherence");
-		logger.info("Original command: " + System.getProperty("sun.java.command"));
 		String ip = servaddr.getIP();
 		logger.debug("IP of server: " + ip);
 		
