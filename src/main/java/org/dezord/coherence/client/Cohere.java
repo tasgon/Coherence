@@ -28,6 +28,8 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -57,21 +59,10 @@ public class Cohere {
 			modlist = getModList();
 			neededmods = getNeededModsList();
 			downloadNeededMods();
-			//getConfigs();
+			getConfigs();
 			moveMods();
 			writeConfigFile();
 			restartMinecraft();
-		}
-		else {
-			moveFoldersBack();
-			
-	    	Configuration config = new Configuration(Coherence.instance.configName);
-	    	config.load();
-	    	
-	    	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
-	    	addressProperty.set("null");
-	    	
-	    	config.save();
 		}
 	}
 	
@@ -154,7 +145,10 @@ public class Cohere {
 	
 	private void getConfigs() throws IOException {
 		logger.info("Downloading configs");
-		FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+		try {
+			FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+		}
+		catch (FileExistsException e) {}
 		
 		File configZip = new File(cohereDir, "config.zip");
 		if (configZip.exists())
@@ -167,6 +161,7 @@ public class Cohere {
 		stream.writeTo(fstream);
 		fstream.close();
 		stream.close();
+		logger.info("Extracting configs");
 		new UnzipUtility().unzip(configZip.getPath(), new File("config").getPath());
 	}
 	
@@ -175,11 +170,17 @@ public class Cohere {
 			@Override
 			public void run() {
 				try {
-					System.out.println("Moving current mods to different folder");
-					FileUtils.moveDirectory(new File("mods"), new File("oldMods"));
-					System.out.println("Copying coherence mods to mods folder");
+					File modDir = new File("mods");
+					System.out.println("Copying current mods to different folder");
+					FileUtils.copyDirectory(modDir, new File("oldMods"));
+					System.out.println("Removing current mods folder");
+					FileDeleteStrategy.FORCE.delete(modDir);
+					System.out.println("Done!");
+					
+					File cohereMods = new File(cohereDir, "mods");
+					System.out.println("Copying files from " + cohereMods.getAbsolutePath() + " to " + modDir.getAbsolutePath());
 					FileUtils.copyDirectory(new File(cohereDir, "mods"), new File("mods"));
-				} catch (IOException e) {}
+				} catch (IOException e) { e.printStackTrace(); }
 			}
 		});*/
 		
@@ -201,22 +202,6 @@ public class Cohere {
 		addressProperty.set(address);
 			
 		config.save();
-	}
-	
-	private void moveFoldersBack() throws IOException {
-		logger.info("Moving folders back");
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					FileUtils.deleteDirectory(new File("mods"));
-					FileUtils.deleteDirectory(new File("config"));
-					
-					FileUtils.moveDirectory(new File("oldMods"), new File("mods"));
-					FileUtils.moveDirectory(new File("oldConfig"), new File("config"));
-				} catch (IOException e) {}
-			}
-		});
 	}
 	
 	private void restartMinecraft() throws IOException, InterruptedException {

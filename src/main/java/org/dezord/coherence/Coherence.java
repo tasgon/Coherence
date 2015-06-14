@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dezord.coherence.client.PostCohere;
 import org.dezord.coherence.server.Server;
 
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,8 @@ public class Coherence
     public static final String MODID = "Coherence";
     public static final String VERSION = "r01";
     public static final int activationTicks = 60;
+    public static boolean connectOnStart;
+    
     public static boolean postCohered = false;
     public static File configName;
     
@@ -58,9 +61,17 @@ public class Coherence
     	Configuration config = new Configuration(configName);
     	config.load();
     	
+    	Property connectProperty = config.get(config.CATEGORY_GENERAL, "connectOnStart", true);
+    	connectProperty.comment = "Set this to false if you don't want to connect back to the server if cohering is done. "
+    			+ "This is useful if you want to use a server modpack on a local world.";
+    	connectOnStart = connectProperty.getBoolean();
+    	
     	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
+    	addressProperty.comment = "This tells coherence what server to connect to on start if connectOnStart is true. "
+    							+ "DON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
     	if (!addressProperty.getString().equals("null")) {
     		address = addressProperty.getString();
+    		new PostCohere(address);
     		addressProperty.set("null");
     		postCohered = true;
     	}
@@ -78,10 +89,10 @@ public class Coherence
     @SubscribeEvent
 	public void clientTick(ClientTickEvent event) {
     	ticks++;
-    	if (ticks == activationTicks && postCohered) {
+    	if (ticks == activationTicks && postCohered && connectOnStart) {
     		connected = true;
     		Minecraft mc = Minecraft.getMinecraft();
-    		mc.displayGuiScreen(new GuiConnecting(mc.currentScreen, mc, address, 25565));
+    		mc.displayGuiScreen(new GuiConnecting(new GuiScreen(), mc, new ServerData("Server", address + ":25565")));
     		return;
     	}
 	}
