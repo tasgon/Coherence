@@ -1,4 +1,4 @@
-package org.dezord.cohereundoer;
+package bin;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -77,8 +77,10 @@ public class CohereUndoer extends Thread {
 				mod.delete();
 			}
 		}
-							
+		
+		System.out.println("Deleting config folder");
 		new File("config").delete();
+		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
 	}
 }
