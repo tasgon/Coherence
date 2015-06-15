@@ -17,12 +17,10 @@ import org.dezord.coherence.Coherence;
 
 public class PostCohere { //This class undoes everything Cohering did to revert it to a normal state
 	private final Logger logger = LogManager.getLogger("Coherence");
-	private final File cohereDir;
 	String address;
 	
 	public PostCohere(String ip) {
 		address = ip;
-		cohereDir = new File("coherence", address);
 		logger.info("Coherence used on last launch. Making sure mods don't launch on next launch.");
 		
 		logger.info("Removing persistent config setting");
@@ -33,5 +31,9 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
     	addressProperty.set("null");
     	
     	config.save();
+	}
+	
+	private void startCohereUndoer() {
+		
 	}
 }
