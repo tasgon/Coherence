@@ -166,23 +166,6 @@ public class Cohere {
 	}
 	
 	private void moveMods() throws IOException {
-		/*Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					File modDir = new File("mods");
-					System.out.println("Copying current mods to different folder");
-					FileUtils.copyDirectory(modDir, new File("oldMods"));
-					System.out.println("Removing current mods folder");
-					FileDeleteStrategy.FORCE.delete(modDir);
-					System.out.println("Done!");
-					
-					File cohereMods = new File(cohereDir, "mods");
-					System.out.println("Copying files from " + cohereMods.getAbsolutePath() + " to " + modDir.getAbsolutePath());
-					FileUtils.copyDirectory(new File(cohereDir, "mods"), new File("mods"));
-				} catch (IOException e) { e.printStackTrace(); }
-			}
-		});*/
 		
 		File modDir = new File("mods");
 		File cohereMods = new File(cohereDir, "mods");
