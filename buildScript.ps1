@@ -18,7 +18,7 @@ $mc = $env:APPDATA + "\.minecraft"
 
 Remove-Item -Verbose -Recurse $mc\mods
 Remove-Item -Verbose -Recurse $mc\config
-Remove-Item -Verbose -Recurse $mc\coherence
+Remove-Item -Verbose -Recurse $mc\coherence*
 Remove-Item -Verbose -Recurse $mc\old*
 New-Item -ItemType directory $mc\mods
 Copy-Item .\build\libs\$name $mc\mods\

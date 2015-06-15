@@ -39,7 +39,7 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "r01";
+    public static final String VERSION = "1.7r02";
     public static final int activationTicks = 60;
     public static boolean connectOnStart;
     
@@ -61,9 +61,9 @@ public class Coherence
     	Configuration config = new Configuration(configName);
     	config.load();
     	
-    	Property connectProperty = config.get(config.CATEGORY_GENERAL, "connectOnStart", true);
-    	connectProperty.comment = "Set this to false if you don't want to connect back to the server if cohering is done. "
-    			+ "This is useful if you want to use a server modpack on a local world.";
+    	Property connectProperty = config.get(config.CATEGORY_GENERAL, "connectOnStart", false);
+    	connectProperty.comment = "Set this to true if you want to connect back to the server after cohering is done and Minecraft loads again."
+    			+ "\nThis is not quite ready yet, so enable this at your own risk.";
     	connectOnStart = connectProperty.getBoolean();
     	
     	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
