@@ -61,6 +61,23 @@ public class CohereUndoer extends Thread {
 		}
 		return builder.toString();
 	}
+	
+	public static boolean deleteDirectory(File directory) {
+	    if(directory.exists()){
+	        File[] files = directory.listFiles();
+	        if(null!=files){
+	            for(int i=0; i<files.length; i++) {
+	                if(files[i].isDirectory()) {
+	                    deleteDirectory(files[i]);
+	                }
+	                else {
+	                    files[i].delete();
+	                }
+	            }
+	        }
+	    }
+	    return(directory.delete());
+	}
 
 	public static void undo() throws IOException {
 		System.out.println("Moving files back.");
@@ -79,7 +96,7 @@ public class CohereUndoer extends Thread {
 		}
 		
 		System.out.println("Deleting config folder");
-		new File("config").delete();
+		deleteDirectory(new File("config"));
 		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
 	}
