@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -19,24 +21,30 @@ import org.apache.logging.log4j.Logger;
 
 public class ModHandler implements HttpHandler {
 	private static final Logger logger = LogManager.getLogger();
+	private static final HashMap<String, String> modMap = ModListHandler.generateMap();
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		if (exchange.getRequestMethod().equalsIgnoreCase("POST")) {
 			Map<String, String> params = (Map)exchange.getAttribute("parameters");
-			String originalMod = params.get("mod");
+			String modName = params.get("mod");
 			exchange.sendResponseHeaders(200, 0);
 			OutputStream responseBody = exchange.getResponseBody();
 			
-			if (originalMod == null) {
+			if (modName == null) {
 				replyIllegal(responseBody, exchange);
 				return;
 			}
-
-			String modName = originalMod.replace('/', ' ').replace('\\', ' ');
-			File modFile = new File("mods" + File.separator + modName);
-			
 			logger.info(exchange.getRemoteAddress().getHostName() + " sent a request for mod " + modName);
+
+			if (!modMap.keySet().contains(modName)) {
+				logger.info(modName + " is not in the mod list.");
+				replyIllegal(responseBody, exchange);
+				return;
+			}
+			
+			File modFile = new File(modMap.get(modName));
+			
 			if (!modFile.exists()) {
 				replyIllegal(responseBody, exchange);
 				return;

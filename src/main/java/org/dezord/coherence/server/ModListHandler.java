@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -11,15 +12,17 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ModListHandler implements HttpHandler {
-	public static String modstring = ModListHandler.generateList();
+	private static final Logger logger = LogManager.getLogger("Coherence");
+	public static String modstring = new Gson().toJson(ModListHandler.generateList());
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		LogManager.getLogger().info(exchange.getRemoteAddress().getHostName() + " sent a request to get the mod list.");
+		logger.info(exchange.getRemoteAddress().getHostName() + " sent a request to get the mod list.");
 		Headers responseHeaders = exchange.getResponseHeaders();
 		exchange.sendResponseHeaders(200, 0);
 		
@@ -28,14 +31,27 @@ public class ModListHandler implements HttpHandler {
 		responseBody.close();
 	}
 	
-	public static String generateList() {
-		File[] mods = new File("mods").listFiles();
-		List modlist = new ArrayList();
-		for (File file : mods) {
-			if(!file.isDirectory() && !file.getName().endsWith(".disabled") /*&& !file.getName().contains("coherence")*/)
-				modlist.add(file.getName());
+	public static List<String> generateList() {
+		File mods = new File("mods");
+		List<File> fileList = (List) FileUtils.listFiles(mods, new String[]{"jar"}, true);
+		List<String> modlist = new ArrayList<String>();
+		
+		for (File modFile : fileList) {
+			String mod = modFile.getName();
+			logger.debug("Adding " + mod + " to the mod list.");
+			modlist.add(mod);
 		}
-		String output = new Gson().toJson(modlist);
-		return output;
+		
+		return modlist;
+	}
+	
+	public static HashMap<String, String> generateMap() {
+		HashMap<String, String> map = new HashMap<String, String>();
+		File mods = new File("mods");
+		List<File> fileList = (List) FileUtils.listFiles(mods, new String[]{"jar"}, true);
+		for (File modFile : fileList) {
+			map.put(modFile.getName(), modFile.getPath());
+		}
+		return map;
 	}
 }

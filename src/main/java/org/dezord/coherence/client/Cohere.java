@@ -50,6 +50,7 @@ public class Cohere {
 	private List<String> neededmods;
 	private boolean requiredRestart = true;
 	private File cohereDir;
+	private String[] currentMods;
 	
 	public Cohere(String ip) throws ClientProtocolException, IOException, InterruptedException {
 		if (!Coherence.instance.postCohered) {
@@ -163,11 +164,14 @@ public class Cohere {
 		stream.close();
 		logger.info("Extracting configs");
 		new UnzipUtility().unzip(configZip.getPath(), new File("config").getPath());
+		
+		FileUtils.deleteQuietly(Coherence.instance.configName); //Make sure that Coherence config carries over
+		FileUtils.copyFile(new File("oldConfig", Coherence.instance.configName.getName()), Coherence.instance.configName);
 	}
 	
 	private void moveMods() throws IOException {
-		
 		File modDir = new File("mods");
+		FileUtils.copyDirectory(modDir, new File("coherence", "localhost"));
 		File cohereMods = new File(cohereDir, "mods");
 		for (File mod : cohereMods.listFiles()) {
 			if (!mod.isDirectory() && !mod.getName().contains("coherence"))
