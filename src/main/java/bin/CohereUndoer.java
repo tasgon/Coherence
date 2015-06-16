@@ -87,7 +87,9 @@ public class CohereUndoer extends Thread {
 			System.out.println("Checking mod " + mod.getName() + " for removal.");
 			if (!modsToKeep.contains(mod.getName())) {
 				System.out.println(mod.getName() + " was cohered. Deleting...");
-				mod.delete();
+				if (mod.isDirectory())
+					deleteDirectory(mod);
+				else mod.delete();
 			}
 		}
 		

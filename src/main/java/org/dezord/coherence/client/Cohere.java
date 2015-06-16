@@ -170,8 +170,9 @@ public class Cohere {
 	}
 	
 	private void moveMods() throws IOException {
-		File modDir = new File("mods");
-		FileUtils.copyDirectory(modDir, new File("coherence", "localhost"));
+		File modDir = new File("mods"); File curMods = new File("coherence", "localhost");
+		FileUtils.deleteQuietly(curMods);
+		FileUtils.copyDirectory(modDir, curMods);
 		File cohereMods = new File(cohereDir, "mods");
 		for (File mod : cohereMods.listFiles()) {
 			if (!mod.isDirectory() && !mod.getName().contains("coherence"))
@@ -206,7 +207,7 @@ public class Cohere {
         logger.info("Command half-string: " + cmd.toString());
         cmd.append(mcCommand);
         
-        Process process = Runtime.getRuntime().exec(cmd.toString());
+        //Process process = Runtime.getRuntime().exec(cmd.toString());
         
         /*byte[] b = new byte[1024]; //Debug code
         InputStream stream = process.getInputStream();
