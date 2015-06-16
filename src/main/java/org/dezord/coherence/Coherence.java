@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dezord.coherence.client.PostCohere;
@@ -58,6 +59,7 @@ public class Coherence
     @EventHandler
     @SideOnly(Side.CLIENT)
     public void PreInit(FMLPreInitializationEvent event) {
+    	
     	configName = event.getSuggestedConfigurationFile();
     	Configuration config = new Configuration(configName);
     	config.load();
@@ -72,10 +74,11 @@ public class Coherence
     							+ "\nDON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
     	address = addressProperty.getString(); addressProperty.set("null");
     	
-    	if (!addressProperty.getString().equals("null")) {
+    	if (!address.equals("null")) {
     		new PostCohere(address);
     		postCohered = true;
     	}
+    	logger.info("Previously cohered: " + postCohered + ". Previous address: " + address);
     	
     	config.save();
     }
