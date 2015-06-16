@@ -207,7 +207,7 @@ public class Cohere {
         logger.info("Command half-string: " + cmd.toString());
         cmd.append(mcCommand);
         
-        //Process process = Runtime.getRuntime().exec(cmd.toString());
+        Process process = Runtime.getRuntime().exec(cmd.toString());
         
         /*byte[] b = new byte[1024]; //Debug code
         InputStream stream = process.getInputStream();
