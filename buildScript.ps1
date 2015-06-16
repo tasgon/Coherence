@@ -22,3 +22,9 @@ Remove-Item -Verbose -Recurse $mc\coherence*
 Remove-Item -Verbose -Recurse $mc\old*
 New-Item -ItemType directory $mc\mods
 Copy-Item .\build\libs\$name $mc\mods\
+
+Write-Output "Setting up server for testing"
+$server = $env:HOMEPATH + "\Desktop\1.7 Test Server"
+
+Remove-Item -Verbose $server\mods\coherence*
+Copy-Item .\build\libs\$name $server\mods
