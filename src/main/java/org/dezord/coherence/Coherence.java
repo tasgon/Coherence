@@ -39,12 +39,13 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.7r02";
+    public static final String VERSION = "1.7a03";
     public static final int activationTicks = 60;
     public static boolean connectOnStart;
     
     public static boolean postCohered = false;
     public static File configName;
+    public static String modsToKeep;
     
     private static final Logger logger = LogManager.getLogger("Coherence");
     private int ticks = 0;
@@ -67,12 +68,12 @@ public class Coherence
     	connectOnStart = connectProperty.getBoolean();
     	
     	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
-    	addressProperty.comment = "This tells coherence what server to connect to on start if connectOnStart is true. "
-    							+ "DON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
+    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true. "
+    							+ "\nDON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
+    	address = addressProperty.getString(); addressProperty.set("null");
+    	
     	if (!addressProperty.getString().equals("null")) {
-    		address = addressProperty.getString();
     		new PostCohere(address);
-    		addressProperty.set("null");
     		postCohered = true;
     	}
     	
@@ -92,12 +93,10 @@ public class Coherence
     	if (ticks == activationTicks && postCohered && connectOnStart) {
     		connected = true;
     		Minecraft mc = Minecraft.getMinecraft();
-    		mc.displayGuiScreen(new GuiConnecting(new GuiScreen(), mc, new ServerData("Server", address + ":25565")));
+    		mc.displayGuiScreen(new GuiConnecting(mc.currentScreen, mc, address, 25565));
     		return;
     	}
 	}
-    
-    
     //=========================================END CLIENT SIDE CODE=================================================================
     
     //=========================================SERVER SIDE CODE=====================================================================
