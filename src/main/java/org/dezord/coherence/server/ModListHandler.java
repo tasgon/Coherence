@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ModListHandler implements HttpHandler {
 	private static final Logger logger = LogManager.getLogger("Coherence");
+	public static final String[] extensions = {"jar", "zip"};
 	public static String modstring = new Gson().toJson(ModListHandler.generateList());
 
 	@Override
@@ -33,7 +34,7 @@ public class ModListHandler implements HttpHandler {
 	
 	public static List<String> generateList() {
 		File mods = new File("mods");
-		List<File> fileList = (List) FileUtils.listFiles(mods, new String[]{"jar"}, true);
+		List<File> fileList = (List) FileUtils.listFiles(mods, extensions, true);
 		List<String> modlist = new ArrayList<String>();
 		
 		for (File modFile : fileList) {
@@ -48,7 +49,7 @@ public class ModListHandler implements HttpHandler {
 	public static HashMap<String, String> generateMap() {
 		HashMap<String, String> map = new HashMap<String, String>();
 		File mods = new File("mods");
-		List<File> fileList = (List) FileUtils.listFiles(mods, new String[]{"jar"}, true);
+		List<File> fileList = (List) FileUtils.listFiles(mods, extensions, true);
 		for (File modFile : fileList) {
 			map.put(modFile.getName(), modFile.getPath());
 		}
