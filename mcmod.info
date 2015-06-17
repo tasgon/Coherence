@@ -3,7 +3,7 @@
   "modid": "coherence",
   "name": "Coherence",
   "description": "Synchronizes mods between client and server",
-  "version": "${r01}",
+  "version": "${1.7a04}",
   "mcversion": "${1.7.10}",
   "url": "",
   "updateUrl": "",
