@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.logging.log4j.LogManager;
  
 public class UnzipUtility
 {
@@ -39,7 +41,7 @@ public class UnzipUtility
 	    	   String fileName = ze.getName();
 	           File newFile = new File(outputFolder + File.separator + fileName);
 	 
-	           System.out.println("file unzip : "+ newFile.getAbsoluteFile());
+	           LogManager.getLogger("Coherence").debug("Unzipping "+ newFile.getAbsoluteFile());
 	 
 	            //create all non exists folders
 	            //else you will hit FileNotFoundException for compressed folder
@@ -59,7 +61,7 @@ public class UnzipUtility
 	        zis.closeEntry();
 	    	zis.close();
 	 
-	    	System.out.println("Done");
+	    	LogManager.getLogger("Coherence").debug("Done");
 	 
 	    } catch(IOException ex){
 	       ex.printStackTrace(); 

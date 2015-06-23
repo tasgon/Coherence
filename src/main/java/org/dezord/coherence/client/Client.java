@@ -45,7 +45,7 @@ public class Client {
 		logger.info("This server supports Coherence! Cohering with server...");
 		
 		try {
-			new Cohere(address);
+			new Cohere(address, ip);
 		}
 		catch (Exception e) {
 			logger.error("Error occured while cohering:");
