@@ -97,6 +97,8 @@ public class CohereUndoer extends Thread {
 		deleteDirectory(new File("config"));
 		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
+		
+		deleteDirectory(new File("coherence", "localhost")); //Crash detection
 	}
 }
 

@@ -48,14 +48,23 @@ public class Cohere {
 	public String url, address;
 	public List<String> modlist;
 	private List<String> neededmods;
-	private boolean requiredRestart = true;
 	private File cohereDir;
 	private String[] currentMods;
 	
-	public Cohere(String ip) throws ClientProtocolException, IOException, InterruptedException {
+	public Cohere(String link, String addr) throws ClientProtocolException, IOException, InterruptedException {
 		if (!Coherence.instance.postCohered) {
-			url = ip;
-			address = url.substring(7, url.length() - 6);
+			detectCrash();
+			
+			url = link;
+			address = addr;
+			
+			/*SiteVerifier verifier = new SiteVerifier(addr);
+			if (!verifier.verify()) {
+				logger.warn(address + " has been flagged as suspicious by several services."
+						+ "As such, Coherence will not attempt to synchronize with this server.");
+				return;
+			}*/
+			
 			cohereDir = new File("coherence", address);
 			modlist = getModList();
 			neededmods = getNeededModsList();
@@ -64,6 +73,15 @@ public class Cohere {
 			moveMods();
 			writeConfigFile();
 			restartMinecraft();
+		}
+	}
+	
+	private void detectCrash() {
+		File curMods = new File("coherence", "localhost");
+		if (curMods.isDirectory() && curMods.list().length > 0) {
+			logger.info("Possible crash detected. Stopping minecraft.");
+			new PostCohere();
+			FMLCommonHandler.instance().exitJava(1, true);
 		}
 	}
 	
@@ -111,9 +129,6 @@ public class Cohere {
 			logList.append(", ");
 		}
 		logger.info(logList.toString());
-		
-		if (neededMods.isEmpty())
-			requiredRestart = false;
 		
 		return neededMods;
 	}
@@ -171,7 +186,6 @@ public class Cohere {
 	
 	private void moveMods() throws IOException {
 		File modDir = new File("mods"); File curMods = new File("coherence", "localhost");
-		FileUtils.deleteQuietly(curMods);
 		FileUtils.copyDirectory(modDir, curMods);
 		File cohereMods = new File(cohereDir, "mods");
 		for (File mod : cohereMods.listFiles()) {

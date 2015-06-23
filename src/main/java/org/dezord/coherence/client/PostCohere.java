@@ -23,10 +23,8 @@ import org.dezord.coherence.Coherence;
 
 public class PostCohere { //This class undoes everything Cohering did to revert it to a normal state
 	private final Logger logger = LogManager.getLogger("Coherence");
-	String address;
 	
-	public PostCohere(String ip) {
-		address = ip;
+	public PostCohere() {
 		logger.info("Coherence used on last launch. Making sure mods don't launch on next launch.");
 		
 		logger.info("Removing persistent config setting");
@@ -65,8 +63,7 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
         
         String processName = ManagementFactory.getRuntimeMXBean().getName();
         cmd.append(processName.split("@")[0]).append(" "); //Get process id
-        cmd.append(new File("").getAbsolutePath()).append(" ");
-        cmd.append(address);
+        cmd.append(new File("").getAbsolutePath());
         logger.info("Executing " + cmd.toString());
         Runtime.getRuntime().exec(cmd.toString());
 	}
