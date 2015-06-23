@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dezord.coherence.client.Cohere;
 import org.dezord.coherence.client.PostCohere;
 import org.dezord.coherence.server.Server;
 
@@ -59,7 +60,6 @@ public class Coherence
     @EventHandler
     @SideOnly(Side.CLIENT)
     public void PreInit(FMLPreInitializationEvent event) {
-    	
     	configName = event.getSuggestedConfigurationFile();
     	Configuration config = new Configuration(configName);
     	config.load();
@@ -81,6 +81,8 @@ public class Coherence
     	logger.info("Previously cohered: " + postCohered + ". Previous address: " + address);
     	
     	config.save();
+    	
+    	Cohere.detectCrash();
     }
     
     @SideOnly(Side.CLIENT)
