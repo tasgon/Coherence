@@ -78,7 +78,7 @@ public class Cohere {
 	
 	private void detectCrash() {
 		File curMods = new File("coherence", "localhost");
-		if (curMods.isDirectory() && curMods.list().length > 0) {
+		if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
 			logger.info("Possible crash detected. Stopping minecraft.");
 			new PostCohere();
 			FMLCommonHandler.instance().exitJava(1, true);
