@@ -70,18 +70,17 @@ public class Cohere {
 			getConfigs();
 			moveMods();
 			writeConfigFile();
-			restartMinecraft();
+			Library.restartMinecraft();
 		}
 	}
 	
-	public static void detectCrash() {
+	public static void detectCrash() throws IOException, InterruptedException {
 		File curMods = new File("coherence", "localhost");
 		if (curMods.exists()) {
 			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
 				logger.info("Possible crash detected. Stopping minecraft.");
 				new PostCohere();
-				Coherence.instance.postCohered = true;
-				FMLCommonHandler.instance().exitJava(0, false);
+				Library.restartMinecraft();
 			}
 		}
 	}
@@ -206,31 +205,4 @@ public class Cohere {
 			
 		config.save();
 	}
-	
-	private void restartMinecraft() throws IOException, InterruptedException {
-		logger.info("Restarting Minecraft");
-        StringBuilder cmd = new StringBuilder();
-        cmd.append("\"").append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\" ");
-        for (String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            cmd.append(jvmArg + " ");
-        }
-        cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
-        
-        String mcCommand = System.getProperty("sun.java.command"); //Get commands passed to Minecraft jar
-        if (!mcCommand.contains("GradleStart")) //Only run the LaunchWrapper if not in a development environment
-        	cmd.append(Launch.class.getName()).append(" ");
-        logger.info("Command half-string: " + cmd.toString());
-        cmd.append(mcCommand);
-        
-        Process process = Runtime.getRuntime().exec(cmd.toString());
-        
-        /*byte[] b = new byte[1024]; //Debug code
-        InputStream stream = process.getInputStream();
-        while (true) {
-        	stream.read(b);
-        	logger.info(new String(b));
-        }*/
-        
-        FMLCommonHandler.instance().exitJava(0, false);
-    }
 }

@@ -48,12 +48,10 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
 	}
 	
 	private void downloadCohereUndoer() throws IOException {
-		URL link = new URL("https://github.com/dezord/Coherence/raw/master/src/main/java/bin/CohereUndoer.class");
-		logger.info("Downloading Coherence undoer from " + link.toString());
-		ReadableByteChannel rbc = Channels.newChannel(link.openStream());
-		FileOutputStream fos = new FileOutputStream(new File("bin", "CohereUndoer.class"));
-		fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-		fos.close();
+		new File("bin").mkdir();
+		File file = new File("bin", "CohereUndoer.class");
+		URL url = new URL("https://github.com/dezord/Coherence/raw/master/src/main/java/bin/CohereUndoer.class");
+		Library.downloadFile(url, file);
 	}
 	
 	private void startCohereUndoer() throws IOException {
