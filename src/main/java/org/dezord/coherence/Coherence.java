@@ -82,7 +82,9 @@ public class Coherence
     	
     	config.save();
     	
-    	Cohere.detectCrash();
+    	try {
+			Cohere.detectCrash();
+		} catch (Exception e) {}
     }
     
     @SideOnly(Side.CLIENT)
