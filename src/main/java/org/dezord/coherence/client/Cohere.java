@@ -36,6 +36,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dezord.coherence.Coherence;
+import org.dezord.coherence.Library;
+import org.dezord.coherence.ziputils.UnzipUtility;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -70,7 +72,7 @@ public class Cohere {
 			getConfigs();
 			moveMods();
 			writeConfigFile();
-			Library.restartMinecraft();
+			MCRelauncher.restartMinecraft();
 		}
 	}
 	
@@ -79,8 +81,8 @@ public class Cohere {
 		if (curMods.exists()) {
 			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
 				logger.info("Possible crash detected. Stopping minecraft.");
-				new PostCohere();
-				Library.restartMinecraft();
+				new PostCohere(true);
+				FMLCommonHandler.instance().exitJava(0, false);
 			}
 		}
 	}

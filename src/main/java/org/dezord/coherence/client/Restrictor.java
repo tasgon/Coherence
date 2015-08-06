@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.dezord.coherence.Library;
+
 public class Restrictor {
 	String os = System.getProperty("os.name").toLowerCase();
 	

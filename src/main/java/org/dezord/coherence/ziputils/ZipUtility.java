@@ -1,4 +1,4 @@
-package org.dezord.coherence.server;
+package org.dezord.coherence.ziputils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.logging.log4j.LogManager;
  
-public class ZipUtils {
+public class ZipUtility {
     private List<String> fileList = new ArrayList<String>();
     
     public ByteArrayOutputStream zipFolder(String dir) {

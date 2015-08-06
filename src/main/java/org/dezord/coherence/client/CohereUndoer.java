@@ -1,4 +1,4 @@
-package bin;
+package org.dezord.coherence.client;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,16 +11,18 @@ import java.util.List;
 
 
 
-public class CohereUndoer extends Thread {
-	public static String pid;
+public class CohereUndoer {
 	public static List<String> modsToKeep;
-	public static File MCDir, cohereDir, modDir, cohereFolder;
+	public static File cohereDir, modDir, cohereFolder;
 	public static final String command = getCommand();
+	public static String[] arguments;
+	public static boolean crashed;
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
+		Thread.sleep(5000);
+		
 		System.out.println("Starting coherence undoer");
-		pid = args[0];
-		MCDir = new File(args[1]);
+		
 		modsToKeep = Arrays.asList(new File("coherence", "localhost").list());
 		
 		System.out.println("Using command: " + command);
@@ -31,7 +33,7 @@ public class CohereUndoer extends Thread {
 	
 	public static String getCommand() {
 		String os = System.getProperty("os.name").toLowerCase();
-		return (os.indexOf("win") >= 0) ? System.getenv("windir") +"\\system32\\"+"tasklist.exe" : "ps -e";
+		return (os.indexOf("win") >= 0) ? System.getenv("windir") +"\\system32\\"+"tasklist.exe /V" : "ps -ef";
 	}
 	
 	public static void detectProcessKill() throws IOException {
@@ -43,7 +45,7 @@ public class CohereUndoer extends Thread {
 			Process process = Runtime.getRuntime().exec(command);
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = input.readLine()) != null) {
-				if (line.contains(pid))
+				if (line.toLowerCase().contains("minecraft"))
 					detected = true;
 			}
 			if (!detected)
@@ -79,7 +81,7 @@ public class CohereUndoer extends Thread {
 
 	public static void undo() throws IOException {
 		System.out.println("Moving files back.");
-		modDir = new File(MCDir, "mods");
+		modDir = new File("mods");
 		
 		System.out.println(getModList());
 		
@@ -98,7 +100,34 @@ public class CohereUndoer extends Thread {
 		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
 		
-		deleteDirectory(new File("coherence", "localhost")); //Crash detection
+		deleteDirectory(new File("coherence", "localhost")); //Contains mods that were just moved back
+		
+		if (crashed)
+			startMC();
+	}
+	
+	public static String join(List<String> list, String conjunction)
+	{
+	   StringBuilder sb = new StringBuilder();
+	   boolean first = true;
+	   for (String item : list)
+	   {
+	      if (first)
+	         first = false;
+	      else
+	         sb.append(conjunction);
+	      sb.append(item);
+	   }
+	   return sb.toString();
+	}
+	
+	public static void startMC() {
+		List<String> args = Arrays.asList(arguments);
+		args.remove(0);
+		String cmd = join(args, " ");
+		try {
+			Runtime.getRuntime().exec(cmd);
+		} catch (IOException e) {}
 	}
 }
 

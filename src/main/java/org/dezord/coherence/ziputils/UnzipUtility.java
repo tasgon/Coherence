@@ -1,4 +1,4 @@
-package org.dezord.coherence.client;
+package org.dezord.coherence.ziputils;
 
 import java.io.File;
 import java.io.FileInputStream;

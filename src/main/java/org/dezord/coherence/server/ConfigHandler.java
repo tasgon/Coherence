@@ -11,9 +11,10 @@ import com.sun.net.httpserver.HttpHandler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.dezord.coherence.ziputils.ZipUtility;
 
 public class ConfigHandler implements HttpHandler {
-	public static final ByteArrayOutputStream configs = new ZipUtils().zipFolder("config");
+	public static final ByteArrayOutputStream configs = new ZipUtility().zipFolder("config");
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
