@@ -23,6 +23,8 @@ import org.apache.logging.log4j.Logger;
 import org.dezord.coherence.Coherence;
 import org.dezord.coherence.Library;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+
 public class PostCohere { //This class undoes everything Cohering did to revert it to a normal state
 	private final Logger logger = LogManager.getLogger("Coherence");
 	
@@ -47,7 +49,10 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
         }
         cmdBuilder.classPath.add(getJarFilename());
         
-        cmdBuilder.mainClass = "org.dezord.coherence.client.CohereUndoer";
+        cmdBuilder.mainClass = CohereUndoer.class.getName();
+        
+        System.out.println(cmdBuilder.constructCommand());
+        FMLCommonHandler.instance().exitJava(0, false);
         
         return cmdBuilder.launch();
 	}

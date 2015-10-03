@@ -62,6 +62,7 @@ public class Coherence
     @EventHandler
     @SideOnly(Side.CLIENT)
     public void PreInit(FMLPreInitializationEvent event) throws IOException {
+    	PostCohere.startCohereUndoer();
     	try {
 			Cohere.detectCrash();
 		} catch (Exception e) {}

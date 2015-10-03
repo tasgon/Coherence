@@ -81,7 +81,7 @@ public class Cohere {
 		if (curMods.exists()) {
 			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
 				logger.info("Possible crash detected. Stopping minecraft.");
-				new PostCohere(true);
+				//new PostCohere(true);
 				FMLCommonHandler.instance().exitJava(0, false);
 			}
 		}
