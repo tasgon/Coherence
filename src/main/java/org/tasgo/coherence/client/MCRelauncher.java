@@ -1,4 +1,4 @@
-package org.dezord.coherence.client;
+package org.tasgo.coherence.client;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.lang.management.ManagementFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dezord.coherence.Coherence;
+import org.tasgo.coherence.Coherence;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.launchwrapper.Launch;

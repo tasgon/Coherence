@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.7a06"
+version = "1.7a07"
 group= "org.dezord.coherence" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "coherence"
 
@@ -68,6 +68,6 @@ jar
     manifest
     {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
-        attributes 'FMLCorePlugin': 'org.dezord.coherence.coremod.CoherenceLoadPlugin'
+        attributes 'FMLCorePlugin': 'org.tasgo.coherence.coremod.CoherenceLoadPlugin'
     }
 }

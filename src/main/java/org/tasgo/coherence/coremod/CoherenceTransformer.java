@@ -1,4 +1,4 @@
-package org.dezord.coherence.coremod;
+package org.tasgo.coherence.coremod;
 
 import java.util.Iterator;
 
@@ -71,7 +71,7 @@ public class CoherenceTransformer implements IClassTransformer, Opcodes { //This
     private InsnList genInsn() {
     	InsnList instructions = new InsnList();
     	instructions.add(new VarInsnNode(ALOAD, 4));
-    	instructions.add(new MethodInsnNode(INVOKESTATIC, "org/dezord/coherence/client/Client", "ClientInit", "(Lnet/minecraft/client/multiplayer/ServerAddress;)V"));
+    	instructions.add(new MethodInsnNode(INVOKESTATIC, "org/tasgo/coherence/client/Client", "ClientInit", "(Lnet/minecraft/client/multiplayer/ServerAddress;)V"));
     	return instructions;
     }
     

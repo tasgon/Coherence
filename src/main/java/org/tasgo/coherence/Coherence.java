@@ -1,4 +1,4 @@
-package org.dezord.coherence;
+package org.tasgo.coherence;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,14 +8,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dezord.coherence.client.Cohere;
-import org.dezord.coherence.client.JavaCommandBuilder;
-import org.dezord.coherence.client.PostCohere;
-import org.dezord.coherence.server.Server;
+import org.tasgo.coherence.client.Cohere;
+import org.tasgo.coherence.client.JavaCommandBuilder;
+import org.tasgo.coherence.client.PostCohere;
+import org.tasgo.coherence.server.Server;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.launchwrapper.Launch;
@@ -43,7 +44,7 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.7a06";
+    public static final String VERSION = "1.7a07";
     public static final int activationTicks = 60;
     public static boolean connectOnStart;
     
@@ -60,31 +61,42 @@ public class Coherence
     
     //=========================================CLIENT SIDE CODE=================================================================
     @EventHandler
-    @SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT) 
     public void PreInit(FMLPreInitializationEvent event) throws IOException {
-    	PostCohere.startCohereUndoer();
+    	//PostCohere.setupTestEnvironment();
+    	configName = event.getSuggestedConfigurationFile();
+    	Configuration config = new Configuration(configName);
+    	config.load();
+    	
+    	Property connectProperty = config.get(config.CATEGORY_GENERAL, "connectOnStart", false);
+    	connectProperty.comment = "Set this to true if you want to connect back to the server after cohering is done and Minecraft loads again."
+    			+ "\nThis is not quite ready yet, so enable this at your own risk.";
+    	connectOnStart = connectProperty.getBoolean();
+    	
+    	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
+    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true. "
+    							+ "\nDON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
+    	address = addressProperty.getString(); addressProperty.set("null");
+    	
+    	if (!address.equals("null")) {
+    		new PostCohere();
+    		postCohered = true;
+    	}
+    	logger.info("Previously cohered: " + postCohered + ". Previous address: " + address);
+    	
+    	config.save();
+    	
     	try {
 			Cohere.detectCrash();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
     
     @SideOnly(Side.CLIENT)
     @EventHandler
 	public void init(FMLInitializationEvent event) {
 		FMLCommonHandler.instance().bus().register(this);
-		logger.info(Coherence.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-	}
-    
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-	public void clientTick(ClientTickEvent event) {
-    	ticks++;
-    	if (ticks == activationTicks && postCohered && connectOnStart) {
-    		connected = true;
-    		Minecraft mc = Minecraft.getMinecraft();
-    		mc.displayGuiScreen(new GuiConnecting(mc.currentScreen, mc, address, 25565));
-    		return;
-    	}
 	}
     //=========================================END CLIENT SIDE CODE=================================================================
     

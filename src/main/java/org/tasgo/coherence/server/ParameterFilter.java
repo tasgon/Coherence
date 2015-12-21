@@ -1,4 +1,4 @@
-package org.dezord.coherence.server;
+package org.tasgo.coherence.server;
 
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.Filter.Chain;

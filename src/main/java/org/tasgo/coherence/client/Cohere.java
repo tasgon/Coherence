@@ -1,4 +1,4 @@
-package org.dezord.coherence.client;
+package org.tasgo.coherence.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,9 +35,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dezord.coherence.Coherence;
-import org.dezord.coherence.Library;
-import org.dezord.coherence.ziputils.UnzipUtility;
+import org.tasgo.coherence.Coherence;
+import org.tasgo.coherence.Library;
+import org.tasgo.coherence.ziputils.UnzipUtility;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,13 +57,6 @@ public class Cohere {
 		if (!Coherence.instance.postCohered) {
 			url = link;
 			address = addr;
-			
-			/*SiteVerifier verifier = new SiteVerifier(addr);
-			if (!verifier.verify()) {
-				logger.warn(address + " has been flagged as suspicious by several services."
-						+ "As such, Coherence will not attempt to synchronize with this server.");
-				return;
-			}*/
 			
 			cohereDir = new File("coherence", address);
 			modlist = getModList();

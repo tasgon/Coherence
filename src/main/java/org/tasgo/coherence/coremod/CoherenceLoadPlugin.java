@@ -1,15 +1,15 @@
-package org.dezord.coherence.coremod;
+package org.tasgo.coherence.coremod;
 
 import java.io.File;
 import java.util.Map;
 
-import org.dezord.coherence.Coherence;
+import org.tasgo.coherence.Coherence;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.Name("CoherenceCore")
 @IFMLLoadingPlugin.MCVersion("1.7.10")
-@IFMLLoadingPlugin.TransformerExclusions({ "org.dezord.coherence.coremod." })
+@IFMLLoadingPlugin.TransformerExclusions({ "org.tasgo.coherence.coremod." })
 @IFMLLoadingPlugin.SortingIndex(Integer.MAX_VALUE - 80)
 public class CoherenceLoadPlugin implements IFMLLoadingPlugin {
 

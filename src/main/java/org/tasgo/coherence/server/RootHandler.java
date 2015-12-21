@@ -1,9 +1,9 @@
-package org.dezord.coherence.server;
-
-import org.dezord.coherence.Coherence;
+package org.tasgo.coherence.server;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.tasgo.coherence.Coherence;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;

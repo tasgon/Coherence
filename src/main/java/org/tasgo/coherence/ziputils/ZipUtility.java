@@ -1,4 +1,4 @@
-package org.dezord.coherence.ziputils;
+package org.tasgo.coherence.ziputils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
