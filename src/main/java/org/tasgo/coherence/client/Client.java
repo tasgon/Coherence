@@ -1,4 +1,4 @@
-package org.dezord.coherence.client;
+package org.tasgo.coherence.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

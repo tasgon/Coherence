@@ -1,4 +1,4 @@
-package org.dezord.coherence.client;
+package org.tasgo.coherence.client;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,28 +6,37 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 
 
 public class CohereUndoer {
-	public static List<String> modsToKeep;
+	public static Collection<File> modsToKeep;
 	public static File cohereDir, modDir, cohereFolder;
 	public static final String command = getCommand();
+	public static String pid;
 	public static String[] arguments;
 	public static boolean crashed;
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		Thread.sleep(5000);
-		
 		System.out.println("Starting coherence undoer");
+		pid = args[0];
 		
-		modsToKeep = Arrays.asList(new File("coherence", "localhost").list());
+		System.out.println(String.format("Pid is %s\nGetting mods list", pid));
+		try {
+			modsToKeep = FileUtils.listFiles(new File("coherence", "localhost"), null, false);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		System.out.println("Using command: " + command);
 		System.out.println("Starting process kill detector");
-		detectProcessKill();
+		waitForProcessEnd();
 		undo();
 	}
 	
@@ -36,71 +45,42 @@ public class CohereUndoer {
 		return (os.indexOf("win") >= 0) ? System.getenv("windir") +"\\system32\\"+"tasklist.exe /V" : "ps -ef";
 	}
 	
-	public static void detectProcessKill() throws IOException {
-		boolean processAlive = true;
-		boolean detected;
+	public static void waitForProcessEnd() throws IOException, InterruptedException {
+		boolean detected = true;
 		String line;
-		while (processAlive) {
+		while (detected) {
 			detected = false;
+			int count = 0;
 			Process process = Runtime.getRuntime().exec(command);
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = input.readLine()) != null) {
-				if (line.toLowerCase().contains("minecraft"))
+				if (line.toLowerCase().contains(pid)) {
 					detected = true;
+				}
 			}
-			if (!detected)
-				processAlive = false;
 		}
-	}
-	
-	public static String getModList() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Files to keep: ");
-		for (String mod : modsToKeep) {
-			builder.append(mod + ", ");  
-		}
-		return builder.toString();
-	}
-	
-	public static boolean deleteDirectory(File directory) {
-	    if(directory.exists()){
-	        File[] files = directory.listFiles();
-	        if(null!=files){
-	            for(int i=0; i<files.length; i++) {
-	                if(files[i].isDirectory()) {
-	                    deleteDirectory(files[i]);
-	                }
-	                else {
-	                    files[i].delete();
-	                }
-	            }
-	        }
-	    }
-	    return(directory.delete());
 	}
 
 	public static void undo() throws IOException {
 		System.out.println("Moving files back.");
 		modDir = new File("mods");
 		
-		System.out.println(getModList());
-		
 		for (File mod : modDir.listFiles()) {
 			System.out.println("Checking mod " + mod.getName() + " for removal.");
 			if (!modsToKeep.contains(mod.getName())) {
 				System.out.println(mod.getName() + " was cohered. Deleting...");
 				if (mod.isDirectory())
-					deleteDirectory(mod);
+					FileUtils.deleteQuietly(mod);
 				else mod.delete();
 			}
 		}
 		
 		System.out.println("Deleting config folder");
-		deleteDirectory(new File("config"));
+		FileUtils.deleteQuietly(new File("config"));
 		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
 		
-		deleteDirectory(new File("coherence", "localhost")); //Contains mods that were just moved back
+		FileUtils.deleteQuietly(new File("coherence", "localhost")); //Contains mods that were just moved back
 		
 		if (crashed)
 			startMC();

@@ -1,4 +1,4 @@
-package org.dezord.coherence.server;
+package org.tasgo.coherence.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,7 +11,7 @@ import com.sun.net.httpserver.HttpHandler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dezord.coherence.ziputils.ZipUtility;
+import org.tasgo.coherence.ziputils.ZipUtility;
 
 public class ConfigHandler implements HttpHandler {
 	public static final ByteArrayOutputStream configs = new ZipUtility().zipFolder("config");

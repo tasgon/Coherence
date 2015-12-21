@@ -1,4 +1,4 @@
-package org.dezord.coherence.server;
+package org.tasgo.coherence.server;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,5 +1,8 @@
-package org.dezord.coherence.client;
+package org.tasgo.coherence.client;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -20,8 +23,8 @@ import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.dezord.coherence.Coherence;
-import org.dezord.coherence.Library;
+import org.tasgo.coherence.Coherence;
+import org.tasgo.coherence.Library;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -29,6 +32,11 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
 	private final Logger logger = LogManager.getLogger("Coherence");
 	
 	public PostCohere() {
+		try {
+			startCohereUndoer();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static String getJarFilename() {
@@ -38,9 +46,9 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
     	
 	}
 	
-	public static Process startCohereUndoer() throws IOException {
+	public static JavaCommandBuilder getCohereUndoer() throws IOException {
 		JavaCommandBuilder cmdBuilder = new JavaCommandBuilder();
-        String[] approvedClassFiles = {"commons-io", "logging"};
+        String[] approvedClassFiles = {"commons-io", "logging", "gson"};
         for (String classFile : ManagementFactory.getRuntimeMXBean().getClassPath().split(";")) { //Load commons-io and logging
         	for (String approvedClassFile : approvedClassFiles) {
         		if (classFile.contains(approvedClassFile))
@@ -50,10 +58,20 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
         cmdBuilder.classPath.add(getJarFilename());
         
         cmdBuilder.mainClass = CohereUndoer.class.getName();
+        cmdBuilder.programArgs.add(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
         
-        System.out.println(cmdBuilder.constructCommand());
-        FMLCommonHandler.instance().exitJava(0, false);
-        
-        return cmdBuilder.launch();
+        return cmdBuilder;
+	}
+	
+	public static Process startCohereUndoer() throws IOException {
+		return getCohereUndoer().launch();
+	}
+	
+	public static void setupTestEnvironment() throws IOException {
+		String cmd = getCohereUndoer().constructCommand();
+		System.out.println(cmd);
+		StringSelection selection = new StringSelection(cmd);
+	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+	    clipboard.setContents(selection, selection);
 	}
 }
