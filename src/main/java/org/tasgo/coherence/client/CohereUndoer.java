@@ -11,22 +11,25 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 
 public class CohereUndoer {
+	public static final Logger logger = LogManager.getLogger("Coherence");
 	public static Collection<File> modsToKeep;
 	public static File cohereDir, modDir, cohereFolder;
 	public static final String command = getCommand();
 	public static String pid;
 	public static String[] arguments;
-	public static boolean crashed;
+	public static boolean crashed = false;
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		System.out.println("Starting coherence undoer");
+		logger.info("Starting coherence undoer");
 		pid = args[0];
 		
-		System.out.println(String.format("Pid is %s\nGetting mods list", pid));
+		logger.info(String.format("Pid is %s\nGetting mods list", pid));
 		try {
 			modsToKeep = FileUtils.listFiles(new File("coherence", "localhost"), null, false);
 		}
@@ -34,8 +37,8 @@ public class CohereUndoer {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Using command: " + command);
-		System.out.println("Starting process kill detector");
+		logger.info("Using command: " + command);
+		logger.info("Starting process kill detector");
 		waitForProcessEnd();
 		undo();
 	}
@@ -62,22 +65,22 @@ public class CohereUndoer {
 	}
 
 	public static void undo() throws IOException {
-		System.out.println("Moving files back.");
+		logger.info("Moving files back.");
 		modDir = new File("mods");
 		
 		for (File mod : modDir.listFiles()) {
-			System.out.println("Checking mod " + mod.getName() + " for removal.");
-			if (!modsToKeep.contains(mod.getName())) {
-				System.out.println(mod.getName() + " was cohered. Deleting...");
+			logger.info("Checking mod " + mod.getName() + " for removal.");
+			if (!modsToKeep.contains(mod)) {
+				logger.info(mod.getName() + " was cohered. Deleting...");
 				if (mod.isDirectory())
 					FileUtils.deleteQuietly(mod);
 				else mod.delete();
 			}
 		}
 		
-		System.out.println("Deleting config folder");
+		logger.info("Deleting config folder");
 		FileUtils.deleteQuietly(new File("config"));
-		System.out.println("Moving old configs back to main config folder");
+		logger.info("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(new File("config"));
 		
 		FileUtils.deleteQuietly(new File("coherence", "localhost")); //Contains mods that were just moved back

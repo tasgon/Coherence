@@ -48,8 +48,8 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
 	
 	public static JavaCommandBuilder getCohereUndoer() throws IOException {
 		JavaCommandBuilder cmdBuilder = new JavaCommandBuilder();
-        String[] approvedClassFiles = {"commons-io", "logging", "gson"};
-        for (String classFile : ManagementFactory.getRuntimeMXBean().getClassPath().split(";")) { //Load commons-io and logging
+        String[] approvedClassFiles = {"commons-io", "log4j"};
+        for (String classFile : ManagementFactory.getRuntimeMXBean().getClassPath().split(";")) { //Load commons-io and log4j
         	for (String approvedClassFile : approvedClassFiles) {
         		if (classFile.contains(approvedClassFile))
         			cmdBuilder.classPath.add(classFile);
@@ -73,5 +73,16 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
 		StringSelection selection = new StringSelection(cmd);
 	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 	    clipboard.setContents(selection, selection);
+	}
+
+	public static void detectCrash() throws IOException, InterruptedException {
+		File curMods = new File("coherence", "localhost");
+		if (curMods.exists()) {
+			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
+				//logger.info("Possible crash detected. Stopping minecraft.");
+				//new PostCohere(true);
+				FMLCommonHandler.instance().exitJava(0, false);
+			}
+		}
 	}
 }

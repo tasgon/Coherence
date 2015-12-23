@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.ziputils.ZipUtility;
 
 public class ConfigHandler implements HttpHandler {
-	public static final ByteArrayOutputStream configs = new ZipUtility().zipFolder("config");
+	public static final ByteArrayOutputStream configs = ZipUtility.getZippedFolder(new File("config"));
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {

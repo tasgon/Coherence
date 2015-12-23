@@ -29,8 +29,14 @@ public class CoherenceTransformer implements IClassTransformer, Opcodes { //This
         	logger.info("net.minecraft.client.multiplayer.GuiConnecting found. Patching...");
             return transformGuiConnecting(basicClass, transformedName.equals(name)); //If it is found, we then transform it
         }
-        else if (transformedName.equals("net.minecraft.client.Minecraft")) {
-        	
+        else if (transformedName.contains("Logger")) {
+        	logger.info(transformedName);
+        	try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         return basicClass; //Otherwise, return the class as it was
     }

@@ -34,7 +34,7 @@ public class Library {
 		fos.close();
 	}
 	
-	/*public static boolean getYesNo(String query) {
+	public static boolean getYesNo(String query) {
 		System.out.println("Init show yes no.");
 		GuiScreen yesNo = new GuiYesNo(new GuiYesNoCallback() {
 			@Override
@@ -44,8 +44,7 @@ public class Library {
 		}, query, "", 0);
 		FMLClientHandler.instance().showGuiScreen(yesNo);
 		while (true) {
-			Minecraft.getMinecraft().currentScreen.updateScreen();
 		}
 		//return false;
-	}*/
+	}
 }
