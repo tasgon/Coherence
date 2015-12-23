@@ -19,7 +19,7 @@ public class UnzipUtility
      * @param zipFile input zip file
      * @param output zip file output folder
      */
-    public void unzip(String zipFile, String outputFolder) {
+    public static void unzip(String zipFile, String outputFolder) {
     	List<String> fileList;
     	byte[] buffer = new byte[1024];
  

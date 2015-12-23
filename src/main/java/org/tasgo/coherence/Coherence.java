@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.client.Cohere;
 import org.tasgo.coherence.client.JavaCommandBuilder;
 import org.tasgo.coherence.client.PostCohere;
 import org.tasgo.coherence.server.Server;
@@ -62,7 +61,10 @@ public class Coherence
     //=========================================CLIENT SIDE CODE=================================================================
     @EventHandler
     @SideOnly(Side.CLIENT) 
-    public void PreInit(FMLPreInitializationEvent event) throws IOException {
+    public void preInit(FMLPreInitializationEvent event) throws IOException {
+    	logger.info("Test");
+    	Library.getYesNo("Hello?");
+    	FMLCommonHandler.instance().exitJava(0, true);
     	//PostCohere.setupTestEnvironment();
     	configName = event.getSuggestedConfigurationFile();
     	Configuration config = new Configuration(configName);
@@ -74,8 +76,7 @@ public class Coherence
     	connectOnStart = connectProperty.getBoolean();
     	
     	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
-    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true. "
-    							+ "\nDON'T EDIT THIS VARIABLE UNLESS YOU KNOW WHAT YOU ARE DOING.";
+    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true.";
     	address = addressProperty.getString(); addressProperty.set("null");
     	
     	if (!address.equals("null")) {
@@ -87,7 +88,7 @@ public class Coherence
     	config.save();
     	
     	try {
-			Cohere.detectCrash();
+			PostCohere.detectCrash();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,7 +104,7 @@ public class Coherence
     //=========================================SERVER SIDE CODE=====================================================================
     @EventHandler
     @SideOnly(Side.SERVER)
-    public void PostInit(FMLPostInitializationEvent event) throws IOException
+    public void postInit(FMLPostInitializationEvent event) throws IOException
     {
     	Server server = new Server();
     }

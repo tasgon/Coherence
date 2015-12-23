@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModClassLoader;
 import cpw.mods.fml.relauncher.Side;
@@ -66,17 +65,6 @@ public class Cohere {
 			moveMods();
 			writeConfigFile();
 			MCRelauncher.restartMinecraft();
-		}
-	}
-	
-	public static void detectCrash() throws IOException, InterruptedException {
-		File curMods = new File("coherence", "localhost");
-		if (curMods.exists()) {
-			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
-				logger.info("Possible crash detected. Stopping minecraft.");
-				//new PostCohere(true);
-				FMLCommonHandler.instance().exitJava(0, false);
-			}
 		}
 	}
 	
