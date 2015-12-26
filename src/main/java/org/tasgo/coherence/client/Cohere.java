@@ -51,6 +51,7 @@ public class Cohere {
 	private List<String> neededmods;
 	private File cohereDir;
 	private String[] currentMods;
+	private boolean updateConfigs;
 	
 	public Cohere(String link, String addr) throws ClientProtocolException, IOException, InterruptedException {
 		if (!Coherence.instance.postCohered) {
@@ -90,6 +91,7 @@ public class Cohere {
 				logList.append(", ");
 			}
 			logger.info(logList.toString());
+			updateConfigs = true;
 			return modlist;
 		}
 			
@@ -113,6 +115,11 @@ public class Cohere {
 		}
 		logger.info(logList.toString());
 		
+		if (!neededmods.isEmpty()) {
+			updateConfigs = Library.getYesNo("There are mods to be updated."
+					+ "\nWould you like to update the configs too?");
+		}
+		
 		return neededMods;
 	}
 	
@@ -121,7 +128,7 @@ public class Cohere {
 			logger.info("No new mods needed.");
 			return;
 		}
-			
+		
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		HashMap<String, String> map = new HashMap<String, String>();
 		final File modDir = new File(cohereDir, "mods");
@@ -136,50 +143,57 @@ public class Cohere {
 			map.clear(); map.put("mod", mod);
 			POSTGetter.get(url + "/mod", map, stream);
 			
-			FileOutputStream fstream = new FileOutputStream(new File(modDir, neededmods.get(i)));
+			File modFile = new File(modDir, neededmods.get(i));
+			modFile.mkdirs();
+			FileOutputStream fstream = new FileOutputStream(modFile);
 			fstream.write(stream.toByteArray());
 			fstream.close();
 		}
 	}
 	
 	private void getConfigs() throws IOException {
-		logger.info("Downloading configs");
-		try {
-			FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+		File configZip;
+		File customConfig = new File(cohereDir, "customConfig.zip");
+		if (updateConfigs || !customConfig.exists()) { //Download the new config if updateConfigs is true
+			logger.info("Downloading configs");
+			try {
+				FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+			}
+			catch (FileExistsException e) {}
+			
+			configZip = new File(cohereDir, "config.zip");
+			if (configZip.exists())
+				configZip.delete();
+			configZip.createNewFile();
+			
+			FileOutputStream fstream = new FileOutputStream(configZip);
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			POSTGetter.get(url + "/config", stream);
+			stream.writeTo(fstream);
+			fstream.close();
+			stream.close();
 		}
-		catch (FileExistsException e) {}
+		else { //Otherwise, use the old configs.
+			configZip = customConfig;
+		}
 		
-		File configZip = new File(cohereDir, "config.zip");
-		if (configZip.exists())
-			configZip.delete();
-		configZip.createNewFile();
-		
-		FileOutputStream fstream = new FileOutputStream(configZip);
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		POSTGetter.get(url + "/config", stream);
-		stream.writeTo(fstream);
-		fstream.close();
-		stream.close();
 		logger.info("Extracting configs");
 		new UnzipUtility().unzip(configZip.getPath(), new File("config").getPath());
 		
-		FileUtils.deleteQuietly(Coherence.instance.configName); //Make sure that Coherence config carries over
-		FileUtils.copyFile(new File("oldConfig", Coherence.instance.configName.getName()), Coherence.instance.configName);
+		FileUtils.deleteQuietly(Coherence.instance.configFile); //Make sure that Coherence config carries over
+		FileUtils.copyFile(new File("oldConfig", Coherence.instance.configFile.getName()), Coherence.instance.configFile);
 	}
 	
 	private void moveMods() throws IOException {
 		File modDir = new File("mods"); File curMods = new File("coherence", "localhost");
 		FileUtils.copyDirectory(modDir, curMods);
 		File cohereMods = new File(cohereDir, "mods");
-		for (File mod : cohereMods.listFiles()) {
-			if (!mod.isDirectory() && !mod.getName().contains("coherence"))
-				FileUtils.copyFile(mod, new File(modDir, mod.getName()));
-		}
+		FileUtils.copyDirectory(cohereMods, modDir);
 	}
 	
 	private void writeConfigFile() {
 		logger.info("Writing configuration file for persistence");
-		Configuration config = new Configuration(Coherence.instance.configName);
+		Configuration config = new Configuration(Coherence.instance.configFile);
 
 		config.load();
 
