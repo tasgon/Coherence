@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ModHandler implements HttpHandler {
 	private static final Logger logger = LogManager.getLogger();
-	private static final HashMap<String, String> modMap = ModListHandler.generateMap();
+	private static final Collection<String> modMap = ModListHandler.generateList();
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -37,13 +38,13 @@ public class ModHandler implements HttpHandler {
 			}
 			logger.info(exchange.getRemoteAddress().getHostName() + " sent a request for mod " + modName);
 
-			if (!modMap.keySet().contains(modName)) {
+			if (!modMap.contains(modName)) {
 				logger.info(modName + " is not in the mod list.");
 				replyIllegal(responseBody, exchange);
 				return;
 			}
 			
-			File modFile = new File(modMap.get(modName));
+			File modFile = new File("mods", modName);
 			
 			if (!modFile.exists()) {
 				replyIllegal(responseBody, exchange);

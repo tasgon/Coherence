@@ -43,18 +43,19 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.7a07";
-    public static final int activationTicks = 60;
+    public static final String VERSION = "1.7b01";
+    //public static final int activationTicks = 60;
     public static boolean connectOnStart;
     
     public static boolean postCohered = false;
-    public static File configName;
+    public static File configFile;
     public static String modsToKeep;
     
     private static final Logger logger = LogManager.getLogger("Coherence");
     private int ticks = 0;
     private boolean connected = true;
     
+    /**Previous connected address*/
     public static String address;
     public static int port;
     
@@ -62,12 +63,8 @@ public class Coherence
     @EventHandler
     @SideOnly(Side.CLIENT) 
     public void preInit(FMLPreInitializationEvent event) throws IOException {
-    	logger.info("Test");
-    	Library.getYesNo("Hello?");
-    	FMLCommonHandler.instance().exitJava(0, true);
-    	//PostCohere.setupTestEnvironment();
-    	configName = event.getSuggestedConfigurationFile();
-    	Configuration config = new Configuration(configName);
+    	configFile = event.getSuggestedConfigurationFile();
+    	Configuration config = new Configuration(configFile);
     	config.load();
     	
     	Property connectProperty = config.get(config.CATEGORY_GENERAL, "connectOnStart", false);
@@ -76,7 +73,8 @@ public class Coherence
     	connectOnStart = connectProperty.getBoolean();
     	
     	Property addressProperty = config.get(config.CATEGORY_GENERAL, "connectToServer", "null");
-    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true.";
+    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true, and is also for persistence."
+    			+ "\nDon't touch this, unless you want to break a lot of things.";
     	address = addressProperty.getString(); addressProperty.set("null");
     	
     	if (!address.equals("null")) {
@@ -97,7 +95,7 @@ public class Coherence
     @SideOnly(Side.CLIENT)
     @EventHandler
 	public void init(FMLInitializationEvent event) {
-		FMLCommonHandler.instance().bus().register(this);
+		//FMLCommonHandler.instance().bus().register(this); //atm, no point
 	}
     //=========================================END CLIENT SIDE CODE=================================================================
     

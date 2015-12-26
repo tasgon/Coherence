@@ -28,8 +28,9 @@ import org.tasgo.coherence.Library;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class PostCohere { //This class undoes everything Cohering did to revert it to a normal state
-	private final Logger logger = LogManager.getLogger("Coherence");
+/**Undo everything Cohering did to revert it to a normal state*/
+public class PostCohere {
+	private static final Logger logger = LogManager.getLogger("Coherence");
 	
 	public PostCohere() {
 		try {
@@ -58,7 +59,10 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
         cmdBuilder.classPath.add(getJarFilename());
         
         cmdBuilder.mainClass = CohereUndoer.class.getName();
-        cmdBuilder.programArgs.add(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        cmdBuilder.programArgs.add("-p " + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+        cmdBuilder.programArgs.add("-i " + Coherence.instance.address);
+        
+        logger.info("Coherence undoer: " + cmdBuilder.constructCommand());
         
         return cmdBuilder;
 	}
@@ -77,11 +81,14 @@ public class PostCohere { //This class undoes everything Cohering did to revert 
 
 	public static void detectCrash() throws IOException, InterruptedException {
 		File curMods = new File("coherence", "localhost");
-		if (curMods.exists()) {
+		if (true) {
 			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
-				//logger.info("Possible crash detected. Stopping minecraft.");
-				//new PostCohere(true);
-				FMLCommonHandler.instance().exitJava(0, false);
+				new PostCohere();
+				if (Library.getYesNo("Coherence has detected a possible crash on the last run."
+							+ "\nWould you like to clear out the mods and restart Minecraft?"))
+					FMLCommonHandler.instance().exitJava(0, false);
+				else
+					Coherence.instance.postCohered = true;
 			}
 		}
 	}

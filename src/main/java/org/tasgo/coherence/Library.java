@@ -9,6 +9,8 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,17 +36,25 @@ public class Library {
 		fos.close();
 	}
 	
+	public static boolean getYesNo(String query, String title) {
+		int dialogButton = JOptionPane.YES_NO_OPTION;
+        JOptionPane.showConfirmDialog (null, query, title, dialogButton);
+        
+        if (dialogButton == JOptionPane.YES_OPTION)
+        	return true;
+        else
+        	return false;
+	}
+	
 	public static boolean getYesNo(String query) {
-		System.out.println("Init show yes no.");
-		GuiScreen yesNo = new GuiYesNo(new GuiYesNoCallback() {
-			@Override
-			public void confirmClicked(boolean res, int val) {
-				System.out.println(res);
-			}
-		}, query, "", 0);
-		FMLClientHandler.instance().showGuiScreen(yesNo);
-		while (true) {
+		return getYesNo(query, "Warning");
+	}
+	
+	public static File getFile(String... paths) {
+		StringBuilder sb = new StringBuilder();
+		for (String file : paths) {
+			sb.append(file + File.separator);
 		}
-		//return false;
+		return new File(sb.toString());
 	}
 }
