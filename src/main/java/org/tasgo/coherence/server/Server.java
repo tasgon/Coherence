@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 @SideOnly(Side.SERVER)
 public class Server {
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LogManager.getLogger("Coherence");
 	public final int port = 25566;
 	
 	public Server() throws IOException {

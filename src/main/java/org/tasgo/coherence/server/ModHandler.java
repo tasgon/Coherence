@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ModHandler implements HttpHandler {
 	private static final Logger logger = LogManager.getLogger();
-	private static final Collection<String> modMap = ModListHandler.generateList();
+	private static final Collection<String> modList = ModListHandler.generateList();
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -38,7 +38,7 @@ public class ModHandler implements HttpHandler {
 			}
 			logger.info(exchange.getRemoteAddress().getHostName() + " sent a request for mod " + modName);
 
-			if (!modMap.contains(modName)) {
+			if (!modList.contains(modName)) {
 				logger.info(modName + " is not in the mod list.");
 				replyIllegal(responseBody, exchange);
 				return;
