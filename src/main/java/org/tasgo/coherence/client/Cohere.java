@@ -143,8 +143,8 @@ public class Cohere {
 			map.clear(); map.put("mod", mod);
 			POSTGetter.get(url + "/mod", map, stream);
 			
-			File modFile = new File(modDir, neededmods.get(i));
-			modFile.mkdirs();
+			File modFile = new File(modDir, mod);
+			new File(modFile.getAbsolutePath().substring(0, modFile.getAbsolutePath().lastIndexOf(File.separator))).mkdirs();
 			FileOutputStream fstream = new FileOutputStream(modFile);
 			fstream.write(stream.toByteArray());
 			fstream.close();

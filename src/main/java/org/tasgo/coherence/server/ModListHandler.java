@@ -33,13 +33,13 @@ public class ModListHandler implements HttpHandler {
 		responseBody.close();
 	}
 	
-	public static Collection<String> generateList() {
+	public static List<String> generateList() {
 		File mods = new File("mods");
 		Collection<File> fileList = FileUtils.listFiles(mods, extensions, true);
 		List<String> modlist = new ArrayList<String>();
 		
 		for (File modFile : fileList) {
-			String mod = modFile.getPath();
+			String mod = modFile.getPath().substring("mods/".length()).replace(File.separator, "/");
 			logger.debug("Adding " + mod + " to the mod list.");
 			modlist.add(mod);
 		}
