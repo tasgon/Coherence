@@ -45,7 +45,7 @@ public class Coherence
     public static final String MODID = "Coherence";
     public static final String VERSION = "1.7b01";
     //public static final int activationTicks = 60;
-    public static boolean connectOnStart;
+    public static boolean connectOnStart, debug;
     
     public static boolean postCohered = false;
     public static File configFile;
@@ -76,6 +76,11 @@ public class Coherence
     	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true, and is also for persistence."
     			+ "\nDon't touch this, unless you want to break a lot of things.";
     	address = addressProperty.getString(); addressProperty.set("null");
+    	
+    	Property debugProperty = config.get(config.CATEGORY_GENERAL, "debug", true);
+    	debugProperty.comment = "This tells Coherence if it should turn on advanced debugging features."
+    			+ "\nUsed mainly for testing purposes.";
+    	debug = debugProperty.getBoolean();
     	
     	if (!address.equals("null")) {
     		new PostCohere();

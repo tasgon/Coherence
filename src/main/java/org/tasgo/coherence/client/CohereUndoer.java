@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Library;
@@ -23,7 +24,7 @@ import joptsimple.OptionSpec;
 
 
 public class CohereUndoer {
-	public final Logger logger = LogManager.getLogger("Coherence");
+	//public final Logger logger = LogManager.getLogger("Coherence");
 	public Collection<File> modsToKeep;
 	public File cohereDir, modDir, cohereFolder;
 	public String pid, ip, minecraftCmd;
@@ -38,7 +39,7 @@ public class CohereUndoer {
 	}
 	
 	public CohereUndoer(OptionSet options) throws IOException, InterruptedException {
-		logger.info("Starting coherence undoer");
+		System.out.println("Starting coherence undoer");
 		pid = (String) options.valueOf("p");
 		ip = (String) options.valueOf("i");
 		if (options.has("c")) {
@@ -46,7 +47,7 @@ public class CohereUndoer {
 			minecraftCmd = (String) options.valueOf("c");
 		}
 		
-		logger.info(String.format("Pid is %s\nGetting mods list", pid));
+		System.out.println(String.format("Pid is %s\nGetting mods list", pid));
 		try {
 			modsToKeep = FileUtils.listFiles(new File("coherence", "localhost"), null, false);
 		}
@@ -54,8 +55,8 @@ public class CohereUndoer {
 			e.printStackTrace();
 		}
 		
-		logger.info("Using command: " + getCommand());
-		logger.info("Starting process kill detector");
+		System.out.println("Using command: " + getCommand());
+		System.out.println("Starting process kill detector");
 		waitForProcessEnd();
 		undo();
 	}
@@ -64,7 +65,7 @@ public class CohereUndoer {
 		String command;
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.indexOf("win") >= 0)
-			command = System.getenv("windir") + "\\system32\\" + "tasklist.exe /FI PID eq %s";
+			command = System.getenv("windir") + "\\system32\\" + "tasklist.exe /FI \"PID eq %s\"";
 		else
 			command = "ps -p %s";
 		return String.format(command, pid);
@@ -86,24 +87,34 @@ public class CohereUndoer {
 	}
 
 	public void undo() throws IOException {
-		logger.info("Moving files back.");
+		System.out.println("Moving files back.");
 		modDir = new File("mods");
 		
 		for (File mod : modDir.listFiles()) {
-			logger.info("Checking mod " + mod.getName() + " for removal.");
+			System.out.println("Checking mod " + mod.getName() + " for removal.");
 			if (!modsToKeep.contains(mod)) {
-				logger.info(mod.getName() + " was cohered. Deleting...");
-				if (mod.isDirectory())
-					FileUtils.deleteQuietly(mod);
-				else mod.delete();
+				System.out.println(mod.getName() + " was cohered. Deleting...");
+				if (mod.isDirectory()) {
+					try {
+						FileUtils.forceDelete(mod);
+					}
+					catch (Exception e) {
+						System.out.println(String.format("Could not delete %m (%e)", mod.getName(), e.getMessage()));
+					}
+				}
+				else {
+					Library.deleteMod(mod);
+				}
 			}
 		}
 		
-		logger.info("Deleting config folder");
 		File config = new File("config");
-		ZipUtility.compressFolder(config, Library.getFile("coherence", ip, "customConfig.zip"));
-		FileUtils.deleteQuietly(config);
-		logger.info("Moving old configs back to main config folder");
+		File customConfig = Library.getFile("coherence", ip, "customConfig.zip");
+		System.out.println("Saving current configs to " + customConfig.getAbsolutePath());
+		new ZipUtility(true).compressFolder(config, customConfig);
+		System.out.println("Deleting configs from config folder");
+		FileUtils.forceDelete(config);
+		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(config);
 		
 		FileUtils.deleteQuietly(new File("coherence", "localhost")); //Contains mods that were just moved back

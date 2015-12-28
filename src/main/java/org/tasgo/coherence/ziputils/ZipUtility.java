@@ -17,11 +17,16 @@ import org.apache.logging.log4j.Logger;
 
 public class ZipUtility {
 	public static final Logger logger = LogManager.getLogger("ZipUtility");
+	public static boolean javaPrint = false; //Set to true if System.out should be used instead of logger
+	
+	public ZipUtility (boolean jP) {
+		javaPrint = jP;
+	}
 
 	public static boolean compressFolder(File dir, File out) {
 		try {
-			FileOutputStream fos = new FileOutputStream(dir);
-			ByteArrayOutputStream bas = getZippedFolder(out);
+			FileOutputStream fos = new FileOutputStream(out);
+			ByteArrayOutputStream bas = getZippedFolder(dir);
 			bas.writeTo(fos);
 			bas.close(); fos.close();
 		}
@@ -50,7 +55,10 @@ public class ZipUtility {
 		Collection<File> fileList = FileUtils.listFiles(dir, null, true);
 		for (File file : fileList) {
 			String filePath = file.getPath();
-			logger.debug("Compressing: " + filePath);
+			if (javaPrint)
+				System.out.println("Compressing: " + filePath);
+			else
+				logger.debug("Compressing: " + filePath);
 			
 			ZipEntry zipEntry = new ZipEntry(filePath);
 			zos.putNextEntry(zipEntry);

@@ -30,12 +30,14 @@ import net.minecraftforge.common.config.Property;
 import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
 import org.tasgo.coherence.Library;
+import org.tasgo.coherence.client.ui.Request;
 import org.tasgo.coherence.ziputils.UnzipUtility;
 
 import com.google.gson.Gson;
@@ -65,6 +67,12 @@ public class Cohere {
 			getConfigs();
 			moveMods();
 			writeConfigFile();
+			
+			if (Coherence.instance.debug) {
+				if (!Request.getYesNo("Would you like to restart Minecraft?"))
+					return;
+			}
+			
 			MCRelauncher.restartMinecraft();
 		}
 	}
@@ -95,28 +103,32 @@ public class Cohere {
 			return modlist;
 		}
 			
-		List<String> currentMods = Arrays.asList(modDir.list());
+		List<String> currentMods = Library.listFilenames(modDir, true, true);
 		List<String> neededMods = new ArrayList<String>();
+		
 		for (String mod : modlist) { //Get list of mods that need to be downloaded from the server
 			if (!currentMods.contains(mod))
 				neededMods.add(mod);
-		}
-		
-		for (String mod : currentMods) { //Delete all mods on client that are not on the server
-			if (!modlist.contains(mod)) {
-				logger.info("Deleting " + mod + " from local storage");
-				new File(modDir, mod).delete();
-			}
 		}
 		
 		for (String mod : neededMods) { //List all needed mods
 			logList.append(mod);
 			logList.append(", ");
 		}
+		
+		if (neededMods.isEmpty())
+			logList.append("None");
+		
+		for (String mod : currentMods) { //Delete all mods on client that are not on the server
+			if (!modlist.contains(mod)) {
+				Library.deleteMod(new File(modDir, mod));
+				logger.info("Deleting " + mod + " from local storage");
+			}
+		}
 		logger.info(logList.toString());
 		
-		if (!neededmods.isEmpty()) {
-			updateConfigs = Library.getYesNo("There are mods to be updated."
+		if (neededMods.size() > 0) {
+			updateConfigs = Request.getYesNo("There are mods to be updated."
 					+ "\nWould you like to update the configs too?");
 		}
 		
@@ -124,11 +136,6 @@ public class Cohere {
 	}
 	
 	private void downloadNeededMods() throws ClientProtocolException, IOException {
-		if (neededmods.isEmpty()) {
-			logger.info("No new mods needed.");
-			return;
-		}
-		
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		HashMap<String, String> map = new HashMap<String, String>();
 		final File modDir = new File(cohereDir, "mods");
@@ -144,7 +151,8 @@ public class Cohere {
 			POSTGetter.get(url + "/mod", map, stream);
 			
 			File modFile = new File(modDir, mod);
-			new File(modFile.getAbsolutePath().substring(0, modFile.getAbsolutePath().lastIndexOf(File.separator))).mkdirs();
+			//new File(modFile.getAbsolutePath().substring(0, modFile.getAbsolutePath().lastIndexOf(File.separator))).mkdirs(); //Old and stupid
+			new File(FilenameUtils.getFullPath(modFile.getAbsolutePath())).mkdirs();
 			FileOutputStream fstream = new FileOutputStream(modFile);
 			fstream.write(stream.toByteArray());
 			fstream.close();
@@ -154,12 +162,13 @@ public class Cohere {
 	private void getConfigs() throws IOException {
 		File configZip;
 		File customConfig = new File(cohereDir, "customConfig.zip");
+		try {
+			FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+		}
+		catch (FileExistsException e) {}
+		
 		if (updateConfigs || !customConfig.exists()) { //Download the new config if updateConfigs is true
 			logger.info("Downloading configs");
-			try {
-				FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
-			}
-			catch (FileExistsException e) {}
 			
 			configZip = new File(cohereDir, "config.zip");
 			if (configZip.exists())
@@ -174,11 +183,12 @@ public class Cohere {
 			stream.close();
 		}
 		else { //Otherwise, use the old configs.
+			logger.info("Using previous configs");
 			configZip = customConfig;
 		}
 		
 		logger.info("Extracting configs");
-		new UnzipUtility().unzip(configZip.getPath(), new File("config").getPath());
+		new UnzipUtility().unzip(configZip.getPath(), new File(".").getPath());
 		
 		FileUtils.deleteQuietly(Coherence.instance.configFile); //Make sure that Coherence config carries over
 		FileUtils.copyFile(new File("oldConfig", Coherence.instance.configFile.getName()), Coherence.instance.configFile);
