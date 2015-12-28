@@ -24,7 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
-import org.tasgo.coherence.Library;
+import org.tasgo.coherence.client.ui.Request;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -40,23 +40,16 @@ public class PostCohere {
 		}
 	}
 	
-	public static String getJarFilename() {
-		String codeSource = Coherence.class.getProtectionDomain().getCodeSource().getLocation().toString();
-    	codeSource = codeSource.replace("jar:file:/", "");
-    	return codeSource.substring(0, codeSource.indexOf("!"));
-    	
-	}
-	
 	public static JavaCommandBuilder getCohereUndoer() throws IOException {
 		JavaCommandBuilder cmdBuilder = new JavaCommandBuilder();
-        String[] approvedClassFiles = {"commons-io", "log4j"};
+        String[] approvedClassFiles = {"commons-io", "log4j", "jopt"};
         for (String classFile : ManagementFactory.getRuntimeMXBean().getClassPath().split(";")) { //Load commons-io and log4j
         	for (String approvedClassFile : approvedClassFiles) {
         		if (classFile.contains(approvedClassFile))
         			cmdBuilder.classPath.add(classFile);
         	}
         }
-        cmdBuilder.classPath.add(getJarFilename());
+        cmdBuilder.classPath.add(JavaCommandBuilder.getCurrentJar());
         
         cmdBuilder.mainClass = CohereUndoer.class.getName();
         cmdBuilder.programArgs.add("-p " + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
@@ -68,7 +61,17 @@ public class PostCohere {
 	}
 	
 	public static Process startCohereUndoer() throws IOException {
-		return getCohereUndoer().launch();
+		if (Coherence.instance.debug) { //Only works on Windows
+			String cmd = getCohereUndoer().constructCommand();
+			File debugFile = new File("debug.bat");
+			FileUtils.deleteQuietly(debugFile);
+			FileWriter fw = new FileWriter(debugFile);
+			fw.write(cmd); fw.write("\npause");
+			fw.close();
+			return Runtime.getRuntime().exec("cmd /C \"start cmd.exe /C debug.bat\"");
+		}
+		else
+			return getCohereUndoer().launch();
 	}
 	
 	public static void setupTestEnvironment() throws IOException {
@@ -84,7 +87,7 @@ public class PostCohere {
 		if (true) {
 			if (curMods.isDirectory() && curMods.list().length > 0 && !Coherence.instance.postCohered) {
 				new PostCohere();
-				if (Library.getYesNo("Coherence has detected a possible crash on the last run."
+				if (Request.getYesNo("Coherence has detected a possible crash on the last run."
 							+ "\nWould you like to clear out the mods and restart Minecraft?"))
 					FMLCommonHandler.instance().exitJava(0, false);
 				else

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tasgo.coherence.Coherence;
 
 public class JavaCommandBuilder {
 	//A modular java command builder and launcher
@@ -47,5 +48,12 @@ public class JavaCommandBuilder {
 
 	public static Process launch() throws IOException {
 		return Runtime.getRuntime().exec(constructCommand());
+	}
+
+	public static String getCurrentJar() {
+		String codeSource = Coherence.class.getProtectionDomain().getCodeSource().getLocation().toString();
+		codeSource = codeSource.replace("jar:file:/", "");
+		return codeSource.substring(0, codeSource.indexOf("!"));
+		
 	}
 }
