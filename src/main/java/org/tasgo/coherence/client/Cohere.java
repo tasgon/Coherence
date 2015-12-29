@@ -129,7 +129,7 @@ public class Cohere {
 		
 		if (neededMods.size() > 0) {
 			updateConfigs = Request.getYesNo("There are mods to be updated."
-					+ "\nWould you like to update the configs too?");
+					+ "\nWould you like to update the configuration files?");
 		}
 		
 		return neededMods;
