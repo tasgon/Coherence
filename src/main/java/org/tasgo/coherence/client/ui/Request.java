@@ -6,7 +6,7 @@ public class Request {
 
 	public static boolean getYesNo(String query, String title) {
 		int dialogButton = JOptionPane.YES_NO_OPTION;
-	    JOptionPane.showConfirmDialog (null, query, title, dialogButton);
+	    JOptionPane.showConfirmDialog(null, query, title, dialogButton);
 	    
 	    if (dialogButton == JOptionPane.YES_OPTION)
 	    	return true;

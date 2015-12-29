@@ -77,7 +77,7 @@ public class Coherence
     			+ "\nDon't touch this, unless you want to break a lot of things.";
     	address = addressProperty.getString(); addressProperty.set("null");
     	
-    	Property debugProperty = config.get(config.CATEGORY_GENERAL, "debug", true);
+    	Property debugProperty = config.get(config.CATEGORY_GENERAL, "debug", false);
     	debugProperty.comment = "This tells Coherence if it should turn on advanced debugging features."
     			+ "\nUsed mainly for testing purposes.";
     	debug = debugProperty.getBoolean();
