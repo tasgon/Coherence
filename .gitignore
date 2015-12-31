@@ -1,3 +1,8 @@
-bin/
-build/
-eclipse/
+/*
+/*/
+!/src/
+!.gitignore
+!gradlew*
+!/gradle/
+!/build.gradle
+!/README.md
