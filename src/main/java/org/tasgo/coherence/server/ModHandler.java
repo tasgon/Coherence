@@ -36,7 +36,7 @@ public class ModHandler implements HttpHandler {
 				replyIllegal(responseBody, exchange);
 				return;
 			}
-			logger.info(exchange.getRemoteAddress().getHostName() + " sent a request for mod " + modName);
+			logger.debug(exchange.getRemoteAddress().getHostName() + " sent a request for mod " + modName);
 
 			if (!modList.contains(modName)) {
 				logger.info(modName + " is not in the mod list.");

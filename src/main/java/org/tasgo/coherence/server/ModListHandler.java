@@ -24,7 +24,7 @@ public class ModListHandler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		logger.info(exchange.getRemoteAddress().getHostName() + " sent a request to get the mod list.");
+		logger.debug(exchange.getRemoteAddress().getHostName() + " sent a request to get the mod list.");
 		Headers responseHeaders = exchange.getResponseHeaders();
 		exchange.sendResponseHeaders(200, 0);
 		
