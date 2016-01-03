@@ -162,8 +162,10 @@ public class Cohere {
 	private void getConfigs() throws IOException {
 		File configZip;
 		File customConfig = new File(cohereDir, "customConfig.zip");
+		File newConfig = Library.getFile("coherence", "localhost", "config");
+		
 		try {
-			FileUtils.moveDirectory(new File("config"), new File("oldConfig")); //Move config folder
+			FileUtils.moveDirectory(new File("config"), newConfig); //Move config folder
 		}
 		catch (FileExistsException e) {}
 		
@@ -191,7 +193,7 @@ public class Cohere {
 		new UnzipUtility().unzip(configZip.getPath(), new File(".").getPath());
 		
 		FileUtils.deleteQuietly(Coherence.instance.configFile); //Make sure that Coherence config carries over
-		FileUtils.copyFile(new File("oldConfig", Coherence.instance.configFile.getName()), Coherence.instance.configFile);
+		FileUtils.copyFile(new File(newConfig, Coherence.instance.configFile.getName()), Coherence.instance.configFile);
 	}
 	
 	private void moveMods() throws IOException {

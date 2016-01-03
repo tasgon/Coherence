@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.client.JavaCommandBuilder;
 import org.tasgo.coherence.client.PostCohere;
+import org.tasgo.coherence.client.ui.Request;
 import org.tasgo.coherence.server.Server;
 
 import net.minecraft.client.Minecraft;
@@ -43,7 +44,7 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.7b01";
+    public static final String VERSION = "1.7b02";
     //public static final int activationTicks = 60;
     public static boolean connectOnStart, debug;
     
@@ -63,6 +64,7 @@ public class Coherence
     @EventHandler
     @SideOnly(Side.CLIENT) 
     public void preInit(FMLPreInitializationEvent event) throws IOException {
+    	
     	configFile = event.getSuggestedConfigurationFile();
     	Configuration config = new Configuration(configFile);
     	config.load();
@@ -77,7 +79,7 @@ public class Coherence
     			+ "\nDon't touch this, unless you want to break a lot of things.";
     	address = addressProperty.getString(); addressProperty.set("null");
     	
-    	Property debugProperty = config.get(config.CATEGORY_GENERAL, "debug", false);
+    	Property debugProperty = config.get(config.CATEGORY_GENERAL, "debug", true);
     	debugProperty.comment = "This tells Coherence if it should turn on advanced debugging features."
     			+ "\nUsed mainly for testing purposes.";
     	debug = debugProperty.getBoolean();

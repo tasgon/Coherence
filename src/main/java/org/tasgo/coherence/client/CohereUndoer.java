@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -25,8 +26,6 @@ import joptsimple.OptionSpec;
 
 public class CohereUndoer {
 	//public final Logger logger = LogManager.getLogger("Coherence");
-	public Collection<File> modsToKeep;
-	public File cohereDir, modDir, cohereFolder;
 	public String pid, ip, minecraftCmd;
 	public boolean crashed = false;
 	
@@ -45,14 +44,6 @@ public class CohereUndoer {
 		if (options.has("c")) {
 			crashed = true;
 			minecraftCmd = (String) options.valueOf("c");
-		}
-		
-		System.out.println(String.format("Pid is %s\nGetting mods list", pid));
-		try {
-			modsToKeep = FileUtils.listFiles(new File("coherence", "localhost"), null, false);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
 		}
 		
 		System.out.println("Using command: " + getCommand());
@@ -88,30 +79,14 @@ public class CohereUndoer {
 
 	public void undo() throws IOException {
 		System.out.println("Moving files back.");
-		modDir = new File("mods");
+		File cohereModsDir = new File("mods");
+		File originalModsDir = new File("coherence", "localhost");
 		
-		for (File mod : modDir.listFiles()) {
-			System.out.println("Checking mod " + mod.getName() + " for removal.");
-			if (!modsToKeep.contains(mod)) {
-				System.out.println(mod.getName() + " was cohered. Deleting...");
-				if (mod.isDirectory()) {
-					try {
-						FileUtils.forceDelete(mod);
-					}
-					catch (Exception e) {
-						System.out.println(String.format("Could not delete %m (%e)", mod.getName(), e.getMessage()));
-					}
-				}
-				else {
-					Library.deleteMod(mod);
-				}
-			}
-		}
 		
 		File config = new File("config");
 		File customConfig = Library.getFile("coherence", ip, "customConfig.zip");
 		System.out.println("Saving current configs to " + customConfig.getAbsolutePath());
-		new ZipUtility(true).compressFolder(config, customConfig);
+		ZipUtility.compressFolder(config, customConfig);
 		System.out.println("Deleting configs from config folder");
 		FileUtils.forceDelete(config);
 		System.out.println("Moving old configs back to main config folder");
