@@ -8,16 +8,19 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
 
 public class Request {
 
 	public static boolean getYesNo(String query, String title) {
 		if (Minecraft.getMinecraft().isFullScreen())
 			Minecraft.getMinecraft().toggleFullscreen();
-		
-		final JOptionPane optionPane = new JOptionPane(query, JOptionPane.QUESTION_MESSAGE,
-				JOptionPane.YES_NO_OPTION);
+
+		final JOptionPane optionPane = new JOptionPane(query, JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
 
 		final JDialog dialog = optionPane.createDialog(title);
 		optionPane.addPropertyChangeListener(new PropertyChangeListener() {
@@ -30,7 +33,7 @@ public class Request {
 		});
 		dialog.pack();
 		dialog.setVisible(true);
-		
+
 		try {
 			int value = ((Integer) optionPane.getValue()).intValue();
 			if (value == JOptionPane.YES_OPTION) {
@@ -38,8 +41,7 @@ public class Request {
 			} else {
 				return false;
 			}
-		}
-		catch (Exception e) { //To handle if the user closes the dialog
+		} catch (Exception e) { // To handle if the user closes the dialog
 			return false;
 		}
 	}
@@ -48,4 +50,18 @@ public class Request {
 		return getYesNo(query, "Warning");
 	}
 
+	public static boolean promptMCyesNo(String query) {
+		System.out.println("Init show yes no.");
+		GuiScreen yesNo = new GuiYesNo(new GuiYesNoCallback() {
+			@Override
+			public void confirmClicked(boolean res, int val) {
+				System.out.println(res);
+			}
+		}, query, "", 0);
+		FMLClientHandler.instance().showGuiScreen(yesNo);
+		while (true) {
+			Minecraft.getMinecraft().runTick();
+		}
+		// return false;
+	}
 }

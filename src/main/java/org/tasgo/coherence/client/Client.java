@@ -25,6 +25,8 @@ public class Client {
 	private static final Logger logger = LogManager.getLogger("Coherence");
 	
 	public static void ClientInit(ServerAddress servaddr) {
+		Request.promptMCyesNo("Test");
+		
 		
 		logger.info("Initializing Coherence");
 		String ip = servaddr.getIP();
