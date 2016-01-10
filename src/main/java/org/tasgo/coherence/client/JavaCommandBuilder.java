@@ -10,13 +10,13 @@ import org.tasgo.coherence.Coherence;
 
 public class JavaCommandBuilder {
 	//A modular java command builder and launcher
-	public static String jvmArgs = "";
-	public static String mainClass = "";
-	public static HashMap<String, String> jvmVars = new HashMap<String, String>();
-	public static ArrayList<String> classPath = new ArrayList<String>();
-	public static ArrayList<String> programArgs = new ArrayList<String>();
+	public String jvmArgs = "";
+	public String mainClass = "";
+	public HashMap<String, String> jvmVars = new HashMap<String, String>();
+	public ArrayList<String> classPath = new ArrayList<String>();
+	public ArrayList<String> programArgs = new ArrayList<String>();
 	
-	public static String constructCommand() {
+	public String constructCommand() {
 		StringBuilder SB = new StringBuilder();
 		SB.append("\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java\" ");
 		
@@ -46,14 +46,14 @@ public class JavaCommandBuilder {
 		return SB.toString();
 	}
 
-	public static Process launch() throws IOException {
+	public Process launch() throws IOException {
 		return Runtime.getRuntime().exec(constructCommand());
 	}
 
-	public static String getCurrentJar() {
+	public static File getCurrentJar() {
 		String codeSource = Coherence.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		codeSource = codeSource.replace("jar:file:/", "");
-		return codeSource.substring(0, codeSource.indexOf("!"));
+		return new File(codeSource.substring(0, codeSource.indexOf("!")));
 		
 	}
 }

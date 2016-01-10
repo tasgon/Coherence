@@ -7,14 +7,11 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,12 +65,11 @@ public class CoherenceTransformer implements IClassTransformer, Opcodes { //This
     private InsnList genInsn() {
     	InsnList instructions = new InsnList();
     	instructions.add(new VarInsnNode(ALOAD, 4));
-    	instructions.add(new MethodInsnNode(INVOKESTATIC, "org/tasgo/coherence/client/Client", "ClientInit", "(Lnet/minecraft/client/multiplayer/ServerAddress;)V"));
+    	instructions.add(new MethodInsnNode(INVOKESTATIC, "org/tasgo/coherence/client/Client", "ClientInit", "(Lnet/minecraft/client/multiplayer/ServerAddress;)V", false));
     	return instructions;
     }
     
     private int getInsertionPoint(MethodNode node) {
-    	@SuppressWarnings("unchecked")
     	Iterator<AbstractInsnNode> iter = node.instructions.iterator();
     	AbstractInsnNode currentNode;
     	
