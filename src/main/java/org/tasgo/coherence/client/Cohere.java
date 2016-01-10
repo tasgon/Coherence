@@ -36,8 +36,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
-import org.tasgo.coherence.Library;
 import org.tasgo.coherence.client.ui.Request;
+import org.tasgo.coherence.common.Library;
 import org.tasgo.coherence.ziputils.UnzipUtility;
 
 import com.google.gson.Gson;

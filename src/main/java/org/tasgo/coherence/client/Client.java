@@ -1,23 +1,12 @@
 package org.tasgo.coherence.client;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
-import java.util.List;
-
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.multiplayer.ServerAddress;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.client.ui.Request;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @SideOnly(Side.CLIENT)
 public class Client {
@@ -25,9 +14,6 @@ public class Client {
 	private static final Logger logger = LogManager.getLogger("Coherence");
 	
 	public static void ClientInit(ServerAddress servaddr) {
-		Request.promptMCyesNo("Test");
-		
-		
 		logger.info("Initializing Coherence");
 		String ip = servaddr.getIP();
 		logger.debug("IP of server: " + ip);

@@ -39,7 +39,7 @@ public class ProgramOutputDisplay extends JFrame {
 	
 	public static Process start(String program, String title) throws IOException {
 		JavaCommandBuilder jcp = new JavaCommandBuilder();
-		jcp.classPath.add(JavaCommandBuilder.getCurrentJar());
+		jcp.classPath.add(JavaCommandBuilder.getCurrentJar().getAbsolutePath());
 		jcp.mainClass = ProgramOutputDisplay.class.getName();
 		jcp.programArgs.add(title); jcp.programArgs.add(program);
 		return jcp.launch();

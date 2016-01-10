@@ -61,3 +61,12 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+jar
+{
+    manifest
+    {
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+        attributes 'FMLCorePlugin': 'org.tasgo.coherence.coremod.CoherenceLoadPlugin'
+    }
+}

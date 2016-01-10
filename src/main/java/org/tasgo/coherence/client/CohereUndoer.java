@@ -2,25 +2,14 @@ package org.tasgo.coherence.client;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.Library;
+import org.tasgo.coherence.common.Library;
 import org.tasgo.coherence.ziputils.ZipUtility;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 
 
 
@@ -67,7 +56,6 @@ public class CohereUndoer {
 		String line;
 		while (detected) {
 			detected = false;
-			int count = 0;
 			Process process = Runtime.getRuntime().exec(getCommand());
 			BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			while ((line = input.readLine()) != null) {
@@ -77,10 +65,24 @@ public class CohereUndoer {
 		}
 	}
 
-	public void undo() throws IOException {
+	public void undo() {
 		System.out.println("Moving files back.");
-		File cohereModsDir = new File("mods");
-		File originalModsDir = new File("coherence", "localhost");
+		File modsDir = new File("mods");
+		File originalModsDir = Library.getFile("coherence", "localhost", "mods");
+		
+		/*//Because the reversal script is running from a file in the mods directory, I can't just remove the file.
+		//So, I have to iterate through the folder and remove all the files save for Coherence.
+		for (File file : cohereModsDir.listFiles()) 
+			FileUtils.deleteQuietly(file);*/
+		FileUtils.deleteQuietly(modsDir);
+		for (File file : originalModsDir.listFiles()) {
+			try {
+				FileUtils.moveToDirectory(file, modsDir, false);
+			} catch (IOException e) {
+				System.err.println("Could not move file " + file.getAbsolutePath() + " back.");
+				e.printStackTrace();
+			}
+		}
 		
 		
 		File config = new File("config");
@@ -88,7 +90,12 @@ public class CohereUndoer {
 		System.out.println("Saving current configs to " + customConfig.getAbsolutePath());
 		ZipUtility.compressFolder(config, customConfig);
 		System.out.println("Deleting configs from config folder");
-		FileUtils.forceDelete(config);
+		try {
+			FileUtils.forceDelete(config);
+		} catch (IOException e) {
+			System.err.println("Could not delete synchronized config files.");
+			e.printStackTrace();
+		}
 		System.out.println("Moving old configs back to main config folder");
 		new File("oldConfig").renameTo(config);
 		

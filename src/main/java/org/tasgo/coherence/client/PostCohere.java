@@ -4,22 +4,9 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-
-import org.apache.commons.io.FileDeleteStrategy;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +36,7 @@ public class PostCohere {
         			cmdBuilder.classPath.add(classFile);
         	}
         }
-        cmdBuilder.classPath.add(JavaCommandBuilder.getCurrentJar());
+        cmdBuilder.classPath.add(JavaCommandBuilder.getCurrentJar().getAbsolutePath());
         
         cmdBuilder.mainClass = CohereUndoer.class.getName();
         cmdBuilder.programArgs.add("-p " + ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
