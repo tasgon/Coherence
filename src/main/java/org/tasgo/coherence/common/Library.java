@@ -13,8 +13,12 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -94,5 +98,9 @@ public class Library {
 			filenames.add(standardized ? name.replace("\\", "/") : name);
 		}
 		return filenames;
+	}
+	
+	public static <T> T urlToJson(URL url, Class<T> classOfT) throws JsonSyntaxException, IOException {
+		return new Gson().fromJson(IOUtils.toString(url), classOfT);
 	}
 }

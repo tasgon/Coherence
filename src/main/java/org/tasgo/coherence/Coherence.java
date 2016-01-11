@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.tasgo.coherence.client.ClientEventHandler;
 import org.tasgo.coherence.client.PostCohere;
 import org.tasgo.coherence.server.Server;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -85,7 +87,8 @@ public class Coherence
     @SideOnly(Side.CLIENT)
     @EventHandler
 	public void init(FMLInitializationEvent event) {
-		//FMLCommonHandler.instance().bus().register(this); //again, no point
+    	logger.info("Registering event handler");
+		FMLCommonHandler.instance().bus().register(new ClientEventHandler());
 	}
     //=========================================END CLIENT SIDE CODE=================================================================
     
