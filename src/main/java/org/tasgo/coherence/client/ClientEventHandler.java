@@ -7,15 +7,16 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientEventHandler {
 	
-	//@SideOnly(Side.CLIENT)
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void checkMainMenu(GuiOpenEvent event) {
-		System.out.println("Gui opened: " + event.gui.getClass().getName());
 		if (event.gui instanceof GuiMainMenu) {
 			event.gui = new UpdateGui(event.gui, "1.7b02");
+			MinecraftForge.EVENT_BUS.unregister(this);
 		}
 	}
 	
