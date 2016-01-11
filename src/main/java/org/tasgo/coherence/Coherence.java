@@ -8,6 +8,7 @@ import org.tasgo.coherence.client.ClientEventHandler;
 import org.tasgo.coherence.client.PostCohere;
 import org.tasgo.coherence.server.Server;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -88,7 +89,7 @@ public class Coherence
     @EventHandler
 	public void init(FMLInitializationEvent event) {
     	logger.info("Registering event handler");
-		FMLCommonHandler.instance().bus().register(new ClientEventHandler());
+		MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 	}
     //=========================================END CLIENT SIDE CODE=================================================================
     
