@@ -1,16 +1,20 @@
 package org.tasgo.coherence.client.ui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
 public class UpdateGui extends GuiScreen {
-	public class Releases {
-		String tag_name, body;
-	}
 	
 	private GuiScreen parentGuiScreen;
 	private String version;
@@ -21,12 +25,14 @@ public class UpdateGui extends GuiScreen {
         version = ver;
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
         buttonList.clear();
-        buttonList.add(new GuiButton(0, this.width / 2 - 175, this.height - 24, 350, 20, I18n.format("OK")));
+        this.buttonList.add(new GuiOptionButton(0, this.width / 2 - 155, this.height / 6 + 96, "Take me there!")); //TODO: Add multilingual support
+        this.buttonList.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height / 6 + 96, "I'll pass."));
     }
 
     @Override
@@ -40,10 +46,15 @@ public class UpdateGui extends GuiScreen {
     {
         if (button.enabled)
         {
-            if (button.id == 0)
-            {
-                this.mc.displayGuiScreen(this.parentGuiScreen);
-            }
+        	if (button.id == 0) {
+				try {
+					Desktop.getDesktop().browse(new URI("https://github.com/tasgoon/Coherence/releases/" + version));
+					//FMLCommonHandler.instance().exitJava(0, false);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+        	}
+            this.mc.displayGuiScreen(this.parentGuiScreen);
         }
     }
     
@@ -53,7 +64,7 @@ public class UpdateGui extends GuiScreen {
         this.drawDefaultBackground();
         
         this.drawCenteredString(this.fontRendererObj, "There is a new update to Coherence: " + version, this.width / 2, 82, 0xFFFFFF);
-        this.drawCenteredString(this.fontRendererObj, "Get it at https://github.com/tasgoon/Coherence/releases/" + version, this.width / 2, 94, 0xFFFFFF);
+        this.drawCenteredString(this.fontRendererObj, "Get it at https://www.github.com/tasgoon/Coherence/releases/" + version, this.width / 2, 94, 0xFFFFFF);
         
         /*GL11.glEnable(GL11.GL_BLEND);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
