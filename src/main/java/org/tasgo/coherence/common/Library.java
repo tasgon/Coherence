@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -17,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -100,7 +102,7 @@ public class Library {
 		return filenames;
 	}
 	
-	public static <T> T urlToJson(URL url, Class<T> classOfT) throws JsonSyntaxException, IOException {
-		return new Gson().fromJson(IOUtils.toString(url), classOfT);
+	public static <T> T urlToJson(URL url, Type tType) throws JsonSyntaxException, IOException {
+		return new Gson().fromJson(IOUtils.toString(url), tType);
 	}
 }
