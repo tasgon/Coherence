@@ -1,6 +1,6 @@
 Coherence
 =========
-This synchronizes mods and config files between the client and server. It is in a very early stage, and filled with bugs. You have been warned.
+This synchronizes mods and config files between the client and server. It is in an early stage, and has bugs. You have been warned.
 
 Building
 --------
