@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.client.MultiplayerHandler;
 import org.tasgo.coherence.client.PostCohere;
-import org.tasgo.coherence.client.UpdateHandler;
 import org.tasgo.coherence.server.Server;
 
 import java.io.File;
@@ -89,7 +88,7 @@ public class Coherence
     @EventHandler
 	public void init(FMLInitializationEvent event) {
     	logger.info("Registering event handler");
-		MinecraftForge.EVENT_BUS.register(new UpdateHandler());
+		//MinecraftForge.EVENT_BUS.register(new UpdateHandler());
         MinecraftForge.EVENT_BUS.register(new MultiplayerHandler());
 	}
     //=========================================END CLIENT SIDE CODE=================================================================

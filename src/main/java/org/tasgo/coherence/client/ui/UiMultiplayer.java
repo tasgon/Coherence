@@ -2,29 +2,31 @@ package org.tasgo.coherence.client.ui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.network.LanServerDetector;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
+import org.tasgo.coherence.client.multiplayer.CoherenceSLEN;
+import org.tasgo.coherence.client.multiplayer.CoherenceSSL;
+
+import java.io.IOException;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class UiMultiplayer extends GuiMultiplayer
+public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 {
     private static final Logger logger = LogManager.getLogger();
     private final OldServerPinger oldServerPinger = new OldServerPinger();
     private GuiScreen parentScreen;
-    private ServerSelectionList serverListSelector;
+    private CoherenceSSL serverListSelector;
     private ServerList savedServerList;
     private GuiButton btnEditServer;
     private GuiButton btnSelectServer;
@@ -42,9 +44,8 @@ public class UiMultiplayer extends GuiMultiplayer
 
     public UiMultiplayer(GuiScreen parentScreen)
     {
-        super(parentScreen);
         this.parentScreen = parentScreen;
-        net.minecraftforge.fml.client.FMLClientHandler.instance().setupServerList();
+        FMLClientHandler.instance().setupServerList();
     }
 
     /**
@@ -73,7 +74,7 @@ public class UiMultiplayer extends GuiMultiplayer
                 logger.warn("Unable to start LAN server detection: " + exception.getMessage());
             }
 
-            this.serverListSelector = new ServerSelectionList(this, this.mc, this.width, this.height, 32, this.height - 64, 36);
+            this.serverListSelector = new CoherenceSSL(this, this.mc, this.width, this.height, 32, this.height - 64, 36);
             this.serverListSelector.func_148195_a(this.savedServerList);
         }
         else
@@ -147,9 +148,9 @@ public class UiMultiplayer extends GuiMultiplayer
         {
             GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.func_148193_k() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k());
 
-            if (button.id == 2 && guilistextended$iguilistentry instanceof ServerListEntryNormal)
+            if (button.id == 2 && guilistextended$iguilistentry instanceof CoherenceSLEN)
             {
-                String s4 = ((ServerListEntryNormal)guilistextended$iguilistentry).getServerData().serverName;
+                String s4 = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData().serverName;
 
                 if (s4 != null)
                 {
@@ -176,10 +177,10 @@ public class UiMultiplayer extends GuiMultiplayer
                 this.addingServer = true;
                 this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName", new Object[0]), "", false)));
             }
-            else if (button.id == 7 && guilistextended$iguilistentry instanceof ServerListEntryNormal)
+            else if (button.id == 7 && guilistextended$iguilistentry instanceof CoherenceSLEN)
             {
                 this.editingServer = true;
-                ServerData serverdata = ((ServerListEntryNormal)guilistextended$iguilistentry).getServerData();
+                ServerData serverdata = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData();
                 this.selectedServer = new ServerData(serverdata.serverName, serverdata.serverIP, false);
                 this.selectedServer.copyFrom(serverdata);
                 this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer));
@@ -197,7 +198,7 @@ public class UiMultiplayer extends GuiMultiplayer
 
     private void refreshServerList()
     {
-        this.mc.displayGuiScreen(new GuiMultiplayer(this.parentScreen));
+        this.mc.displayGuiScreen(new UiMultiplayer(this.parentScreen));
     }
 
     public void confirmClicked(boolean result, int id)
@@ -208,7 +209,7 @@ public class UiMultiplayer extends GuiMultiplayer
         {
             this.deletingServer = false;
 
-            if (result && guilistextended$iguilistentry instanceof ServerListEntryNormal)
+            if (result && guilistextended$iguilistentry instanceof CoherenceSLEN)
             {
                 this.savedServerList.removeServerData(this.serverListSelector.func_148193_k());
                 this.savedServerList.saveServerList();
@@ -249,9 +250,9 @@ public class UiMultiplayer extends GuiMultiplayer
         {
             this.editingServer = false;
 
-            if (result && guilistextended$iguilistentry instanceof ServerListEntryNormal)
+            if (result && guilistextended$iguilistentry instanceof CoherenceSLEN)
             {
-                ServerData serverdata = ((ServerListEntryNormal)guilistextended$iguilistentry).getServerData();
+                ServerData serverdata = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData();
                 serverdata.serverName = this.selectedServer.serverName;
                 serverdata.serverIP = this.selectedServer.serverIP;
                 serverdata.copyFrom(this.selectedServer);
@@ -269,12 +270,6 @@ public class UiMultiplayer extends GuiMultiplayer
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        int serverListSize = 0;
-        try {
-            Method serverSizeMethod = this.serverListSelector.getClass().getDeclaredMethod("getSize");
-            serverSizeMethod.setAccessible(true);
-            serverListSize = ((Integer) serverSizeMethod.invoke(serverListSelector)).intValue();
-        } catch (Exception ignored) { }
         int i = this.serverListSelector.func_148193_k();
         GuiListExtended.IGuiListEntry guilistextended$iguilistentry = i < 0 ? null : this.serverListSelector.getListEntry(i);
 
@@ -290,7 +285,7 @@ public class UiMultiplayer extends GuiMultiplayer
                 {
                     if (isShiftKeyDown())
                     {
-                        if (i > 0 && guilistextended$iguilistentry instanceof ServerListEntryNormal)
+                        if (i > 0 && guilistextended$iguilistentry instanceof CoherenceSLEN)
                         {
                             this.savedServerList.swapServers(i, i - 1);
                             this.selectServer(this.serverListSelector.func_148193_k() - 1);
@@ -307,7 +302,7 @@ public class UiMultiplayer extends GuiMultiplayer
                         {
                             if (this.serverListSelector.func_148193_k() > 0)
                             {
-                                this.selectServer(serverListSize - 1);
+                                this.selectServer(this.serverListSelector.getSize() - 1);
                                 this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
                             }
                             else
@@ -333,16 +328,16 @@ public class UiMultiplayer extends GuiMultiplayer
                             this.serverListSelector.func_148195_a(this.savedServerList);
                         }
                     }
-                    else if (i < serverListSize)
+                    else if (i < this.serverListSelector.getSize())
                     {
                         this.selectServer(this.serverListSelector.func_148193_k() + 1);
                         this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
 
                         if (this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k()) instanceof ServerListEntryLanScan)
                         {
-                            if (this.serverListSelector.func_148193_k() < serverListSize - 1)
+                            if (this.serverListSelector.func_148193_k() < this.serverListSelector.getSize() - 1)
                             {
-                                this.selectServer(serverListSize + 1);
+                                this.selectServer(this.serverListSelector.getSize() + 1);
                                 this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
                             }
                             else
@@ -380,6 +375,7 @@ public class UiMultiplayer extends GuiMultiplayer
         this.hoveringText = null;
         this.drawDefaultBackground();
         this.serverListSelector.drawScreen(mouseX, mouseY, partialTicks);
+        //this.drawCenteredString(this.fontRendererObj, I18n.format("multiplayer.title", new Object[0]), this.width / 2, 20, 16777215);
         this.drawCenteredString(this.fontRendererObj, "Hi from Coherence.", this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
@@ -393,9 +389,9 @@ public class UiMultiplayer extends GuiMultiplayer
     {
         GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.func_148193_k() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k());
 
-        if (guilistextended$iguilistentry instanceof ServerListEntryNormal)
+        if (guilistextended$iguilistentry instanceof CoherenceSLEN)
         {
-            this.connectToServer(((ServerListEntryNormal)guilistextended$iguilistentry).getServerData());
+            this.connectToServer(((CoherenceSLEN)guilistextended$iguilistentry).getServerData());
         }
         else if (guilistextended$iguilistentry instanceof ServerListEntryLanDetected)
         {
@@ -406,7 +402,7 @@ public class UiMultiplayer extends GuiMultiplayer
 
     private void connectToServer(ServerData server)
     {
-        net.minecraftforge.fml.client.FMLClientHandler.instance().connectToServer(this, server);
+        FMLClientHandler.instance().connectToServer(this, server);
     }
 
     public void selectServer(int index)
@@ -421,7 +417,7 @@ public class UiMultiplayer extends GuiMultiplayer
         {
             this.btnSelectServer.enabled = true;
 
-            if (guilistextended$iguilistentry instanceof ServerListEntryNormal)
+            if (guilistextended$iguilistentry instanceof CoherenceSLEN)
             {
                 this.btnEditServer.enabled = true;
                 this.btnDeleteServer.enabled = true;
@@ -462,17 +458,17 @@ public class UiMultiplayer extends GuiMultiplayer
         return this.savedServerList;
     }
 
-    public boolean func_175392_a(ServerListEntryNormal p_175392_1_, int p_175392_2_)
+    public boolean func_175392_a(CoherenceSLEN p_175392_1_, int p_175392_2_)
     {
         return p_175392_2_ > 0;
     }
 
-    public boolean func_175394_b(ServerListEntryNormal p_175394_1_, int p_175394_2_)
+    public boolean func_175394_b(CoherenceSLEN p_175394_1_, int p_175394_2_)
     {
         return p_175394_2_ < this.savedServerList.countServers() - 1;
     }
 
-    public void func_175391_a(ServerListEntryNormal p_175391_1_, int p_175391_2_, boolean p_175391_3_)
+    public void func_175391_a(CoherenceSLEN p_175391_1_, int p_175391_2_, boolean p_175391_3_)
     {
         int i = p_175391_3_ ? 0 : p_175391_2_ - 1;
         this.savedServerList.swapServers(p_175391_2_, i);
@@ -485,7 +481,7 @@ public class UiMultiplayer extends GuiMultiplayer
         this.serverListSelector.func_148195_a(this.savedServerList);
     }
 
-    public void func_175393_b(ServerListEntryNormal p_175393_1_, int p_175393_2_, boolean p_175393_3_)
+    public void func_175393_b(CoherenceSLEN p_175393_1_, int p_175393_2_, boolean p_175393_3_)
     {
         int i = p_175393_3_ ? this.savedServerList.countServers() - 1 : p_175393_2_ + 1;
         this.savedServerList.swapServers(p_175393_2_, i);
