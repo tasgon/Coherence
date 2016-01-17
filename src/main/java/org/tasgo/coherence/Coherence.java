@@ -1,25 +1,25 @@
 package org.tasgo.coherence;
 
-import java.io.File;
-import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.client.UpdateHandler;
-import org.tasgo.coherence.client.PostCohere;
-import org.tasgo.coherence.server.Server;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tasgo.coherence.client.MultiplayerHandler;
+import org.tasgo.coherence.client.PostCohere;
+import org.tasgo.coherence.client.UpdateHandler;
+import org.tasgo.coherence.server.Server;
+
+import java.io.File;
+import java.io.IOException;
 
 @Mod(modid = Coherence.MODID, version = Coherence.VERSION, acceptableRemoteVersions = "*")
 public class Coherence
@@ -28,7 +28,7 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.7b02";
+    public static final String VERSION = "1.8b01";
     public static boolean connectOnStart;
 
 	public boolean debug;
@@ -48,7 +48,7 @@ public class Coherence
     
     //=========================================CLIENT SIDE CODE=================================================================
     @EventHandler
-    @SideOnly(Side.CLIENT) 
+    @SideOnly(Side.CLIENT)
     public void preInit(FMLPreInitializationEvent event) throws IOException {
     	
     	configFile = event.getSuggestedConfigurationFile();
@@ -90,6 +90,7 @@ public class Coherence
 	public void init(FMLInitializationEvent event) {
     	logger.info("Registering event handler");
 		MinecraftForge.EVENT_BUS.register(new UpdateHandler());
+        MinecraftForge.EVENT_BUS.register(new MultiplayerHandler());
 	}
     //=========================================END CLIENT SIDE CODE=================================================================
     

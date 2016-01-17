@@ -1,23 +1,20 @@
 package org.tasgo.coherence.client;
 
-import java.lang.reflect.Type;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.reflect.TypeToken;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.tasgo.coherence.Coherence;
 import org.tasgo.coherence.client.ui.UpdateGui;
 import org.tasgo.coherence.common.Library;
 import org.tasgo.coherence.common.github.GithubRelease;
 
-import com.google.common.reflect.TypeToken;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import java.lang.reflect.Type;
+import java.net.URL;
+import java.util.List;
 
 public class UpdateHandler {
 	

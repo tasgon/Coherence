@@ -1,37 +1,14 @@
 package org.tasgo.coherence.client;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModClassLoader;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.main.Main;
-import net.minecraft.client.multiplayer.ServerAddress;
-import net.minecraft.launchwrapper.Launch;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
-import org.apache.commons.io.FileDeleteStrategy;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,10 +17,14 @@ import org.tasgo.coherence.client.ui.Request;
 import org.tasgo.coherence.common.Library;
 import org.tasgo.coherence.ziputils.UnzipUtility;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import cpw.mods.fml.common.Loader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class Cohere {

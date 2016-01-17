@@ -1,15 +1,13 @@
 package org.tasgo.coherence.client;
 
+import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.Coherence;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraft.launchwrapper.Launch;
 
 public class MCRelauncher {
 	private static final Logger logger = LogManager.getLogger("Coherence");

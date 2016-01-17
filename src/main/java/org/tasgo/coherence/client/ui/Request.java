@@ -8,7 +8,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
@@ -50,18 +50,4 @@ public class Request {
 		return getYesNo(query, "Warning");
 	}
 
-	public static boolean promptMCyesNo(String query) {
-		System.out.println("Init show yes no.");
-		GuiScreen yesNo = new GuiYesNo(new GuiYesNoCallback() {
-			@Override
-			public void confirmClicked(boolean res, int val) {
-				System.out.println(res);
-			}
-		}, query, "", 0);
-		FMLClientHandler.instance().showGuiScreen(yesNo);
-		while (true) {
-			Minecraft.getMinecraft().runTick();
-		}
-		// return false;
-	}
 }

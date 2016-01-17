@@ -7,13 +7,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
 import org.tasgo.coherence.client.ui.Request;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 
 /**Undo everything Cohering did to revert it to a normal state*/
 public class PostCohere {
