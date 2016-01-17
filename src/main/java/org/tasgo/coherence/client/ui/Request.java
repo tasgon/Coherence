@@ -1,18 +1,10 @@
 package org.tasgo.coherence.client.ui;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import net.minecraft.client.Minecraft;
+
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.gui.GuiYesNoCallback;
 
 public class Request {
 
