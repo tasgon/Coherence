@@ -1,18 +1,12 @@
 package org.tasgo.coherence.client.ui;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
+import org.lwjgl.input.Keyboard;
+
+import java.awt.*;
+import java.net.URI;
 
 public class UpdateGui extends GuiScreen {
 	
