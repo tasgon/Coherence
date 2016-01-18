@@ -14,7 +14,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class UiYesNo extends GuiScreen
 {
-    /** A reference to the screen object that created  Used for navigating between screens. */
+    /** The interface that gets called when an action is performed. */
     protected UiYesNoCallback callback;
     protected String message;
     private final List<String> lines = Lists.<String>newArrayList();
@@ -24,7 +24,7 @@ public class UiYesNo extends GuiScreen
     protected String cancelButtonText;
     private int ticksUntilEnable;
 
-    public UiYesNo( UiYesNoCallback yesNoCallback, String msg)
+    public UiYesNo(UiYesNoCallback yesNoCallback, String msg)
     {
         callback = yesNoCallback;
         message = msg;

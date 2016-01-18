@@ -12,6 +12,9 @@ import org.tasgo.coherence.client.ui.UiMultiplayer;
 
 import java.util.List;
 
+/**
+ * ServerSelectionList, modified for Coherence.
+ */
 @SideOnly(Side.CLIENT)
 public class CoherenceSSL extends GuiListExtended
 {
@@ -70,7 +73,7 @@ public class CoherenceSSL extends GuiListExtended
         return slotIndex == this.selectedSlotIndex;
     }
 
-    public int func_148193_k()
+    public int getSelectedSlot()
     {
         return this.selectedSlotIndex;
     }
