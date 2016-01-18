@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.io.FileExistsException;
@@ -14,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
 import org.tasgo.coherence.client.ui.Request;
+import org.tasgo.coherence.client.ui.UiYesNo;
+import org.tasgo.coherence.client.ui.UiYesNoCallback;
 import org.tasgo.coherence.common.Library;
 import org.tasgo.coherence.ziputils.UnzipUtility;
 
@@ -45,18 +48,24 @@ public class Cohere {
 			cohereDir = new File("coherence", address);
 			modlist = getModList();
 			neededmods = getNeededModsList();
-			downloadNeededMods();
-			getConfigs();
-			moveMods();
-			writeConfigFile();
-			
-			if (Coherence.instance.debug) {
-				if (!Request.getYesNo("Would you like to restart Minecraft?"))
-					return;
-			}
-			
-			MCRelauncher.restartMinecraft();
+
+			StringBuilder sb = new StringBuilder(String.format("The server %s would like to load %d mods.", address, neededmods.size()));
+            sb.append("\nAre you okay with this?");
+			FMLClientHandler.instance().showGuiScreen(new UiYesNo(new UiYesNoCallback() {
+				@Override
+				public void onClick(boolean result) {
+                    System.out.println(result);
+				}
+			}, sb.toString()));
 		}
+	}
+
+	public void startSync() throws IOException, InterruptedException {
+		downloadNeededMods();
+		getConfigs();
+		moveMods();
+		writeConfigFile();
+		MCRelauncher.restartMinecraft();
 	}
 	
 	private List<String> getModList() throws ClientProtocolException, IOException {

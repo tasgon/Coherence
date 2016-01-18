@@ -15,27 +15,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.client.MultiplayerHandler;
 import org.tasgo.coherence.client.PostCohere;
+import org.tasgo.coherence.common.Version;
 import org.tasgo.coherence.server.Server;
 
 import java.io.File;
 import java.io.IOException;
 
-@Mod(modid = Coherence.MODID, version = Coherence.VERSION, acceptableRemoteVersions = "*")
+@SuppressWarnings("unused")
+@Mod(modid = Coherence.MODID, version = Coherence.VERSION_STRING, acceptableRemoteVersions = "*")
 public class Coherence
 {
 	@Instance("Coherence")
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION = "1.8b01";
-    public static boolean connectOnStart;
+    public static final String VERSION_STRING = "1.8b03";
+    public static final Version VERSION = Version.fromString(VERSION_STRING);
 
+    public static boolean connectOnStart;
 	public boolean debug;
     
     public boolean postCohered = false;
     public static File configFile;
     public static String modsToKeep;
-    
+
     private static final Logger logger = LogManager.getLogger("Coherence");
     /*public static final int activationTicks = 60; //atm, no point
     private int ticks = 0;

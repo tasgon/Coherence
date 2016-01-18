@@ -11,22 +11,22 @@ import org.tasgo.coherence.client.ui.UiMultiplayer;
 @SideOnly(Side.CLIENT)
 public class CoherenceSLELD implements GuiListExtended.IGuiListEntry
 {
-    private final UiMultiplayer field_148292_c;
+    private final UiMultiplayer uiMultiplayer;
     protected final Minecraft mc;
-    protected final LanServerDetector.LanServer field_148291_b;
-    private long field_148290_d = 0L;
+    protected final LanServerDetector.LanServer lanServer;
+    private long curTime = 0L;
 
-    protected CoherenceSLELD(UiMultiplayer p_i45046_1_, LanServerDetector.LanServer p_i45046_2_)
+    protected CoherenceSLELD(UiMultiplayer multiplayer, LanServerDetector.LanServer server)
     {
-        this.field_148292_c = p_i45046_1_;
-        this.field_148291_b = p_i45046_2_;
+        this.uiMultiplayer = multiplayer;
+        this.lanServer = server;
         this.mc = Minecraft.getMinecraft();
     }
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
     {
         this.mc.fontRendererObj.drawString(I18n.format("lanServer.title", new Object[0]), x + 32 + 3, y + 1, 16777215);
-        this.mc.fontRendererObj.drawString(this.field_148291_b.getServerMotd(), x + 32 + 3, y + 12, 8421504);
+        this.mc.fontRendererObj.drawString(this.lanServer.getServerMotd(), x + 32 + 3, y + 12, 8421504);
 
         if (this.mc.gameSettings.hideServerAddress)
         {
@@ -34,7 +34,7 @@ public class CoherenceSLELD implements GuiListExtended.IGuiListEntry
         }
         else
         {
-            this.mc.fontRendererObj.drawString(this.field_148291_b.getServerIpPort(), x + 32 + 3, y + 12 + 11, 3158064);
+            this.mc.fontRendererObj.drawString(this.lanServer.getServerIpPort(), x + 32 + 3, y + 12 + 11, 3158064);
         }
     }
 
@@ -43,14 +43,14 @@ public class CoherenceSLELD implements GuiListExtended.IGuiListEntry
      */
     public boolean mousePressed(int slotIndex, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_)
     {
-        this.field_148292_c.selectServer(slotIndex);
+        this.uiMultiplayer.selectServer(slotIndex);
 
-        if (Minecraft.getSystemTime() - this.field_148290_d < 250L)
+        if (Minecraft.getSystemTime() - this.curTime < 250L)
         {
-            this.field_148292_c.connectToSelected();
+            this.uiMultiplayer.connectToSelected();
         }
 
-        this.field_148290_d = Minecraft.getSystemTime();
+        this.curTime = Minecraft.getSystemTime();
         return false;
     }
 
@@ -67,6 +67,6 @@ public class CoherenceSLELD implements GuiListExtended.IGuiListEntry
 
     public LanServerDetector.LanServer getLanServer()
     {
-        return this.field_148291_b;
+        return this.lanServer;
     }
 }

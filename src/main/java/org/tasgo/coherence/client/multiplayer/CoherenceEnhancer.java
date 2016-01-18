@@ -17,6 +17,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.ExtendedServerListData;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import org.tasgo.coherence.client.Client;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -25,13 +26,13 @@ import java.util.Map;
 /**
  * FML, modified for Coherence.
  */
-public class CoherenceFML
+public class CoherenceEnhancer
 {
 
     public static String enhanceServerListEntry(CoherenceSLEN serverListEntry, ServerData serverEntry, int x, int width, int y, int relativeMouseX, int relativeMouseY)
     {
         String tooltip;
-        int idx;
+        int textureIndex;
         boolean blocked = false;
         Map<ServerData, ExtendedServerListData> sDT = (Map<ServerData, ExtendedServerListData>) getPrivateField("serverDataTag");
         if (sDT.containsKey(serverEntry))
@@ -39,27 +40,35 @@ public class CoherenceFML
             ExtendedServerListData extendedData = sDT.get(serverEntry);
             if ("FML".equals(extendedData.type) && extendedData.isCompatible)
             {
-                idx = 0;
+                textureIndex = 0;
                 tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modData.size());
+            }
+            else if ("FML".equals(extendedData.type) && Client.guaranteedCompatible(serverEntry.serverIP)) { //Added for Coherence
+                textureIndex = 0;
+                tooltip = String.format("Coherence-enabled FML modded server\n%d mods present", extendedData.modData.size());
+            }
+            else if("FML".equals(extendedData.type) && Client.maybeCompatible(serverEntry.serverIP)) { //Also added for Coherence
+                textureIndex = 16;
+                tooltip = String.format("Coherence-enabled FML modded server\nMay not be compatible\n%d mods present", extendedData.modData.size());
             }
             else if ("FML".equals(extendedData.type) && !extendedData.isCompatible)
             {
-                idx = 16;
+                textureIndex = 16;
                 tooltip = String.format("Incompatible FML modded server\n%d mods present", extendedData.modData.size());
             }
             else if ("BUKKIT".equals(extendedData.type))
             {
-                idx = 32;
+                textureIndex = 32;
                 tooltip = String.format("Bukkit modded server");
             }
             else if ("VANILLA".equals(extendedData.type))
             {
-                idx = 48;
+                textureIndex = 48;
                 tooltip = String.format("Vanilla server");
             }
             else
             {
-                idx = 64;
+                textureIndex = 64;
                 tooltip = String.format("Unknown server data");
             }
             blocked = extendedData.isBlocked;
@@ -69,7 +78,7 @@ public class CoherenceFML
             return null;
         }
         FMLClientHandler.instance().getClient().getTextureManager().bindTexture((ResourceLocation) getPrivateField("iconSheet"));
-        Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
+        Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)textureIndex, 16, 16, 256.0f, 256.0f);
         if (blocked)
         {
             Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, 80, 16, 16, 256.0f, 256.0f);
