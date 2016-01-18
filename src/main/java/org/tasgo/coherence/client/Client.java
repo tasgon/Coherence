@@ -1,12 +1,14 @@
 package org.tasgo.coherence.client;
 
-import java.io.ByteArrayOutputStream;
+import net.minecraft.client.multiplayer.ServerAddress;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.client.multiplayer.ServerAddress;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.tasgo.coherence.Coherence;
+import org.tasgo.coherence.common.Version;
+
+import java.io.ByteArrayOutputStream;
 
 @SideOnly(Side.CLIENT)
 public class Client {
@@ -43,4 +45,26 @@ public class Client {
 			logger.error("Cohering cannot continue. Exiting Coherence");
 		}
 	}
+
+	public static String getRemoteVersion(String ip) {
+        String address = "http://" + ip + ":25566";
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            POSTGetter.get(address, outputStream);
+            String[] remoteData = outputStream.toString().split(" ");
+            return remoteData[1];
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public static boolean guaranteedCompatible(String ip) {
+        return getRemoteVersion(ip) == Coherence.VERSION_STRING;
+    }
+
+    public static boolean maybeCompatible(String ip) {
+        return Version.fromString(getRemoteVersion(ip)).getMCVersion() == Coherence.VERSION.getMCVersion();
+    }
 }

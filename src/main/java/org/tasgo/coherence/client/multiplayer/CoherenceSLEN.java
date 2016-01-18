@@ -42,8 +42,8 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
     private final ServerData serverData;
     private final ResourceLocation resourceLocation;
     private String field_148299_g;
-    private DynamicTexture field_148305_h;
-    private long field_148298_f;
+    private DynamicTexture texture;
+    private long curTime;
 
     protected CoherenceSLEN(UiMultiplayer multiplayer, ServerData data)
     {
@@ -51,7 +51,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
         this.serverData = data;
         this.mc = Minecraft.getMinecraft();
         this.resourceLocation = new ResourceLocation("servers/" + data.serverIP + "/icon");
-        this.field_148305_h = (DynamicTexture)this.mc.getTextureManager().getTexture(this.resourceLocation);
+        this.texture = (DynamicTexture)this.mc.getTextureManager().getTexture(this.resourceLocation);
     }
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
@@ -62,8 +62,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
             this.serverData.pingToServer = -2L;
             this.serverData.serverMOTD = "";
             this.serverData.populationInfo = "";
-            threadPoolExecutor.submit(new Runnable()
-            {
+            threadPoolExecutor.submit(new Runnable() {
                 public void run()
                 {
                     try
@@ -170,7 +169,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
             this.uiMultiplayer.getServerList().saveServerList();
         }
 
-        if (this.field_148305_h != null)
+        if (this.texture != null)
         {
             this.func_178012_a(x, y, this.resourceLocation);
         }
@@ -182,7 +181,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
         int i1 = mouseX - x;
         int j1 = mouseY - y;
 
-        String tooltip = CoherenceFML.enhanceServerListEntry(this, this.serverData, x, listWidth, y, i1, j1);
+        String tooltip = CoherenceEnhancer.enhanceServerListEntry(this, this.serverData, x, listWidth, y, i1, j1);
         if (tooltip != null)
         {
             this.uiMultiplayer.setHoveringText(tooltip);
@@ -260,7 +259,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
         if (this.serverData.getBase64EncodedIconData() == null)
         {
             this.mc.getTextureManager().deleteTexture(this.resourceLocation);
-            this.field_148305_h = null;
+            this.texture = null;
         }
         else
         {
@@ -290,14 +289,14 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
                 return;
             }
 
-            if (this.field_148305_h == null)
+            if (this.texture == null)
             {
-                this.field_148305_h = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight());
-                this.mc.getTextureManager().loadTexture(this.resourceLocation, this.field_148305_h);
+                this.texture = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight());
+                this.mc.getTextureManager().loadTexture(this.resourceLocation, this.texture);
             }
 
-            bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), this.field_148305_h.getTextureData(), 0, bufferedimage.getWidth());
-            this.field_148305_h.updateDynamicTexture();
+            bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), this.texture.getTextureData(), 0, bufferedimage.getWidth());
+            this.texture.updateDynamicTexture();
         }
     }
 
@@ -330,12 +329,12 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
 
         this.uiMultiplayer.selectServer(slotIndex);
 
-        if (Minecraft.getSystemTime() - this.field_148298_f < 250L)
+        if (Minecraft.getSystemTime() - this.curTime < 250L)
         {
             this.uiMultiplayer.connectToSelected();
         }
 
-        this.field_148298_f = Minecraft.getSystemTime();
+        this.curTime = Minecraft.getSystemTime();
         return false;
     }
 

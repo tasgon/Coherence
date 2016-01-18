@@ -16,8 +16,8 @@ import java.util.List;
 public class CoherenceSSL extends GuiListExtended
 {
     private final UiMultiplayer owner;
-    private final List<CoherenceSLEN> field_148198_l = Lists.<CoherenceSLEN>newArrayList();
-    private final List<CoherenceSLELD> field_148199_m = Lists.<CoherenceSLELD>newArrayList();
+    private final List<CoherenceSLEN> slenList = Lists.<CoherenceSLEN>newArrayList();
+    private final List<CoherenceSLELD> sleldList = Lists.<CoherenceSLELD>newArrayList();
     private final GuiListExtended.IGuiListEntry lanScanEntry = new ServerListEntryLanScan();
     private int selectedSlotIndex = -1;
 
@@ -32,13 +32,13 @@ public class CoherenceSSL extends GuiListExtended
      */
     public GuiListExtended.IGuiListEntry getListEntry(int index)
     {
-        if (index < this.field_148198_l.size())
+        if (index < this.slenList.size())
         {
-            return (GuiListExtended.IGuiListEntry)this.field_148198_l.get(index);
+            return (GuiListExtended.IGuiListEntry)this.slenList.get(index);
         }
         else
         {
-            index = index - this.field_148198_l.size();
+            index = index - this.slenList.size();
 
             if (index == 0)
             {
@@ -47,14 +47,14 @@ public class CoherenceSSL extends GuiListExtended
             else
             {
                 --index;
-                return (GuiListExtended.IGuiListEntry)this.field_148199_m.get(index);
+                return (GuiListExtended.IGuiListEntry)this.sleldList.get(index);
             }
         }
     }
 
     public int getSize()
     {
-        return this.field_148198_l.size() + 1 + this.field_148199_m.size();
+        return this.slenList.size() + 1 + this.sleldList.size();
     }
 
     public void setSelectedSlotIndex(int selectedSlotIndexIn)
@@ -75,23 +75,23 @@ public class CoherenceSSL extends GuiListExtended
         return this.selectedSlotIndex;
     }
 
-    public void func_148195_a(ServerList p_148195_1_)
+    public void updateServerList(ServerList serverList)
     {
-        this.field_148198_l.clear();
+        this.slenList.clear();
 
-        for (int i = 0; i < p_148195_1_.countServers(); ++i)
+        for (int i = 0; i < serverList.countServers(); ++i)
         {
-            this.field_148198_l.add(new CoherenceSLEN(this.owner, p_148195_1_.getServerData(i)));
+            this.slenList.add(new CoherenceSLEN(this.owner, serverList.getServerData(i)));
         }
     }
 
-    public void func_148194_a(List<LanServerDetector.LanServer> p_148194_1_)
+    public void updateServerList(List<LanServerDetector.LanServer> lanServerList)
     {
-        this.field_148199_m.clear();
+        this.sleldList.clear();
 
-        for (LanServerDetector.LanServer lanserverdetector$lanserver : p_148194_1_)
+        for (LanServerDetector.LanServer lanServer : lanServerList)
         {
-            this.field_148199_m.add(new CoherenceSLELD(this.owner, lanserverdetector$lanserver));
+            this.sleldList.add(new CoherenceSLELD(this.owner, lanServer));
         }
     }
 
