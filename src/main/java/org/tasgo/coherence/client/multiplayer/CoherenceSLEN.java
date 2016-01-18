@@ -30,6 +30,10 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
+
+/**
+ * ServerListEntryNormal, modified for Coherence.
+ */
 @SideOnly(Side.CLIENT)
 public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
 {

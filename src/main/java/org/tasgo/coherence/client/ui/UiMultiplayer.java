@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
+import org.tasgo.coherence.client.Client;
 import org.tasgo.coherence.client.multiplayer.CoherenceSLEN;
 import org.tasgo.coherence.client.multiplayer.CoherenceSSL;
 
@@ -108,7 +109,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
         this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 52, 100, 20, I18n.format("selectServer.add", new Object[0])));
         this.buttonList.add(new GuiButton(8, this.width / 2 + 4, this.height - 28, 70, 20, I18n.format("selectServer.refresh", new Object[0])));
         this.buttonList.add(new GuiButton(0, this.width / 2 + 4 + 76, this.height - 28, 75, 20, I18n.format("gui.cancel", new Object[0])));
-        this.selectServer(this.serverListSelector.func_148193_k());
+        this.selectServer(this.serverListSelector.getSelectedSlot());
     }
 
     /**
@@ -151,11 +152,11 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
     {
         if (button.enabled)
         {
-            GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.func_148193_k() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k());
+            GuiListExtended.IGuiListEntry guiListEntry = this.serverListSelector.getSelectedSlot() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.getSelectedSlot());
 
-            if (button.id == 2 && guilistextended$iguilistentry instanceof CoherenceSLEN)
+            if (button.id == 2 && guiListEntry instanceof CoherenceSLEN)
             {
-                String s4 = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData().serverName;
+                String s4 = ((CoherenceSLEN)guiListEntry).getServerData().serverName;
 
                 if (s4 != null)
                 {
@@ -164,7 +165,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
                     String s1 = "\'" + s4 + "\' " + I18n.format("selectServer.deleteWarning", new Object[0]);
                     String s2 = I18n.format("selectServer.deleteButton", new Object[0]);
                     String s3 = I18n.format("gui.cancel", new Object[0]);
-                    GuiYesNo guiyesno = new GuiYesNo(this, s, s1, s2, s3, this.serverListSelector.func_148193_k());
+                    GuiYesNo guiyesno = new GuiYesNo(this, s, s1, s2, s3, this.serverListSelector.getSelectedSlot());
                     this.mc.displayGuiScreen(guiyesno);
                 }
             }
@@ -182,10 +183,10 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
                 this.addingServer = true;
                 this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer = new ServerData(I18n.format("selectServer.defaultName", new Object[0]), "", false)));
             }
-            else if (button.id == 7 && guilistextended$iguilistentry instanceof CoherenceSLEN)
+            else if (button.id == 7 && guiListEntry instanceof CoherenceSLEN)
             {
                 this.editingServer = true;
-                ServerData serverdata = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData();
+                ServerData serverdata = ((CoherenceSLEN)guiListEntry).getServerData();
                 this.selectedServer = new ServerData(serverdata.serverName, serverdata.serverIP, false);
                 this.selectedServer.copyFrom(serverdata);
                 this.mc.displayGuiScreen(new GuiScreenAddServer(this, this.selectedServer));
@@ -208,15 +209,15 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     public void confirmClicked(boolean result, int id)
     {
-        GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.func_148193_k() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k());
+        GuiListExtended.IGuiListEntry guiListEntry = this.serverListSelector.getSelectedSlot() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.getSelectedSlot());
 
         if (this.deletingServer)
         {
             this.deletingServer = false;
 
-            if (result && guilistextended$iguilistentry instanceof CoherenceSLEN)
+            if (result && guiListEntry instanceof CoherenceSLEN)
             {
-                this.savedServerList.removeServerData(this.serverListSelector.func_148193_k());
+                this.savedServerList.removeServerData(this.serverListSelector.getSelectedSlot());
                 this.savedServerList.saveServerList();
                 this.serverListSelector.setSelectedSlotIndex(-1);
                 this.serverListSelector.updateServerList(this.savedServerList);
@@ -255,9 +256,9 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
         {
             this.editingServer = false;
 
-            if (result && guilistextended$iguilistentry instanceof CoherenceSLEN)
+            if (result && guiListEntry instanceof CoherenceSLEN)
             {
-                ServerData serverdata = ((CoherenceSLEN)guilistextended$iguilistentry).getServerData();
+                ServerData serverdata = ((CoherenceSLEN)guiListEntry).getServerData();
                 serverdata.serverName = this.selectedServer.serverName;
                 serverdata.serverIP = this.selectedServer.serverIP;
                 serverdata.copyFrom(this.selectedServer);
@@ -275,8 +276,8 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-        int i = this.serverListSelector.func_148193_k();
-        GuiListExtended.IGuiListEntry guilistextended$iguilistentry = i < 0 ? null : this.serverListSelector.getListEntry(i);
+        int i = this.serverListSelector.getSelectedSlot();
+        GuiListExtended.IGuiListEntry guiListEntry = i < 0 ? null : this.serverListSelector.getListEntry(i);
 
         if (keyCode == 63)
         {
@@ -290,22 +291,22 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
                 {
                     if (isShiftKeyDown())
                     {
-                        if (i > 0 && guilistextended$iguilistentry instanceof CoherenceSLEN)
+                        if (i > 0 && guiListEntry instanceof CoherenceSLEN)
                         {
                             this.savedServerList.swapServers(i, i - 1);
-                            this.selectServer(this.serverListSelector.func_148193_k() - 1);
+                            this.selectServer(this.serverListSelector.getSelectedSlot() - 1);
                             this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
                             this.serverListSelector.updateServerList(this.savedServerList);
                         }
                     }
                     else if (i > 0)
                     {
-                        this.selectServer(this.serverListSelector.func_148193_k() - 1);
+                        this.selectServer(this.serverListSelector.getSelectedSlot() - 1);
                         this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
 
-                        if (this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k()) instanceof ServerListEntryLanScan)
+                        if (this.serverListSelector.getListEntry(this.serverListSelector.getSelectedSlot()) instanceof ServerListEntryLanScan)
                         {
-                            if (this.serverListSelector.func_148193_k() > 0)
+                            if (this.serverListSelector.getSelectedSlot() > 0)
                             {
                                 this.selectServer(this.serverListSelector.getSize() - 1);
                                 this.serverListSelector.scrollBy(-this.serverListSelector.getSlotHeight());
@@ -335,12 +336,12 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
                     }
                     else if (i < this.serverListSelector.getSize())
                     {
-                        this.selectServer(this.serverListSelector.func_148193_k() + 1);
+                        this.selectServer(this.serverListSelector.getSelectedSlot() + 1);
                         this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
 
-                        if (this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k()) instanceof ServerListEntryLanScan)
+                        if (this.serverListSelector.getListEntry(this.serverListSelector.getSelectedSlot()) instanceof ServerListEntryLanScan)
                         {
-                            if (this.serverListSelector.func_148193_k() < this.serverListSelector.getSize() - 1)
+                            if (this.serverListSelector.getSelectedSlot() < this.serverListSelector.getSize() - 1)
                             {
                                 this.selectServer(this.serverListSelector.getSize() + 1);
                                 this.serverListSelector.scrollBy(this.serverListSelector.getSlotHeight());
@@ -392,7 +393,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     public void connectToSelected()
     {
-        GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.func_148193_k() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.func_148193_k());
+        GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.getSelectedSlot() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.getSelectedSlot());
 
         if (guilistextended$iguilistentry instanceof CoherenceSLEN)
         {
@@ -407,22 +408,23 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     private void connectToServer(ServerData server)
     {
-        FMLClientHandler.instance().connectToServer(this, server);
+        new Client(this, server);
+        //FMLClientHandler.instance().connectToServer(this, server);
     }
 
     public void selectServer(int index)
     {
         this.serverListSelector.setSelectedSlotIndex(index);
-        GuiListExtended.IGuiListEntry guilistextended$iguilistentry = index < 0 ? null : this.serverListSelector.getListEntry(index);
+        GuiListExtended.IGuiListEntry guiListEntry = index < 0 ? null : this.serverListSelector.getListEntry(index);
         this.btnSelectServer.enabled = false;
         this.btnEditServer.enabled = false;
         this.btnDeleteServer.enabled = false;
 
-        if (guilistextended$iguilistentry != null && !(guilistextended$iguilistentry instanceof ServerListEntryLanScan))
+        if (guiListEntry != null && !(guiListEntry instanceof ServerListEntryLanScan))
         {
             this.btnSelectServer.enabled = true;
 
-            if (guilistextended$iguilistentry instanceof CoherenceSLEN)
+            if (guiListEntry instanceof CoherenceSLEN)
             {
                 this.btnEditServer.enabled = true;
                 this.btnDeleteServer.enabled = true;
@@ -478,7 +480,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
         int i = b ? 0 : pos - 1;
         this.savedServerList.swapServers(pos, i);
 
-        if (this.serverListSelector.func_148193_k() == pos)
+        if (this.serverListSelector.getSelectedSlot() == pos)
         {
             this.selectServer(i);
         }
@@ -491,7 +493,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
         int i = flipType ? this.savedServerList.countServers() - 1 : pos + 1;
         this.savedServerList.swapServers(pos, i);
 
-        if (this.serverListSelector.func_148193_k() == pos)
+        if (this.serverListSelector.getSelectedSlot() == pos)
         {
             this.selectServer(i);
         }
