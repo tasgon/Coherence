@@ -3,6 +3,7 @@ package org.tasgo.coherence.client.ui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -21,6 +22,15 @@ public class UiError extends GuiScreen
     {
         this.callback = callback;
         this.error = err;
+    }
+
+    public static void crash(final GuiScreen parent, Exception e) {
+        FMLClientHandler.instance().showGuiScreen(new UiError(new UiBasicCallback() {
+            @Override
+            public void onClick() {
+                FMLClientHandler.instance().showGuiScreen(parent);
+            }
+        }, e.getMessage()));
     }
 
     /**

@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
-import org.tasgo.coherence.client.Client;
+import org.tasgo.coherence.client.synchronizer.Initiator;
 import org.tasgo.coherence.client.multiplayer.CoherenceSLEN;
 import org.tasgo.coherence.client.multiplayer.CoherenceSSL;
 
@@ -408,7 +408,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     private void connectToServer(ServerData server)
     {
-        new Client(this, server);
+        new Initiator(this, server).start();
         //FMLClientHandler.instance().connectToServer(this, server);
     }
 

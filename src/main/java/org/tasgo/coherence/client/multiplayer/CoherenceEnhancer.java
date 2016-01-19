@@ -17,7 +17,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.ExtendedServerListData;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import org.tasgo.coherence.client.Client;
+import org.tasgo.coherence.client.CoherenceData;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -43,11 +43,11 @@ public class CoherenceEnhancer
                 textureIndex = 0;
                 tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modData.size());
             }
-            else if ("FML".equals(extendedData.type) && Client.guaranteedCompatible(serverEntry.serverIP)) { //Added for Coherence
+            else if ("FML".equals(extendedData.type) && CoherenceData.guaranteedCompatible(serverEntry.serverIP)) { //Added for Coherence
                 textureIndex = 0;
                 tooltip = String.format("Coherence-enabled FML modded server\n%d mods present", extendedData.modData.size());
             }
-            else if("FML".equals(extendedData.type) && Client.maybeCompatible(serverEntry.serverIP)) { //Also added for Coherence
+            else if("FML".equals(extendedData.type) && CoherenceData.maybeCompatible(serverEntry.serverIP)) { //Also added for Coherence
                 textureIndex = 16;
                 tooltip = String.format("Coherence-enabled FML modded server\nMay not be compatible\n%d mods present", extendedData.modData.size());
             }
