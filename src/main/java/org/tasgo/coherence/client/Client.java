@@ -8,8 +8,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.Coherence;
-import org.tasgo.coherence.client.ui.UiError;
 import org.tasgo.coherence.client.ui.UiBasicCallback;
+import org.tasgo.coherence.client.ui.UiError;
 import org.tasgo.coherence.common.Version;
 
 import java.io.ByteArrayOutputStream;
@@ -18,12 +18,13 @@ import java.io.ByteArrayOutputStream;
 public class Client {
 	
 	private static final Logger logger = LogManager.getLogger("Coherence");
-	private GuiScreen parent;
+	public GuiScreen parent;
     public ServerData serverData;
     public String coherenceURL;
 
 	public Client(GuiScreen par, ServerData server) {
 		logger.info("Initializing Coherence");
+
         this.parent = par;
         this.serverData = server;
         this.coherenceURL = getCoherenceURL(server.serverIP);

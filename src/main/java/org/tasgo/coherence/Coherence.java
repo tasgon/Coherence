@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tasgo.coherence.client.MultiplayerHandler;
+import org.tasgo.coherence.client.handlers.MultiplayerHandler;
 import org.tasgo.coherence.client.PostCohere;
 import org.tasgo.coherence.common.Version;
 import org.tasgo.coherence.server.Server;
