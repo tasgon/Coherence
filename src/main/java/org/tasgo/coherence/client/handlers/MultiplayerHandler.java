@@ -1,4 +1,4 @@
-package org.tasgo.coherence.client;
+package org.tasgo.coherence.client.handlers;
 
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
