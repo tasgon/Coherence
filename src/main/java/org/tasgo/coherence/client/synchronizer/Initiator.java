@@ -25,36 +25,28 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The class that performs the 'handshake' with the server.
+ */
 @SideOnly(Side.CLIENT)
-public class Initiator extends Thread {
-	
-	private static final Logger logger = LogManager.getLogger("Coherence");
-    private UiProgress uiProgress;
-	public GuiScreen parent;
-    public ServerData serverData;
+public class Initiator extends Task {
     public String address, url;
     public File cohereDir;
     public List<String> modlist;
     public List<String> neededmods;
     public boolean updateConfigs;
 
-    public Initiator(GuiScreen parent, ServerData serverData) {
+
+    public Initiator(Client parent) {
+        super(parent);
+
         if (Coherence.instance.postCohered)
             return;
-
-        this.parent = parent;
-        this.serverData = serverData;
         this.address = serverData.serverIP;
         this.url = CoherenceData.getCoherenceURL(address);
-        this.uiProgress = new UiProgress(parent, 2);
     }
 
     public void run() {
-        if (Coherence.instance.postCohered) {
-            FMLClientHandler.instance().connectToServer(parent, serverData);
-            return;
-        }
-
         try {
             cohereDir = new File("coherence", this.address);
             modlist = getModList();
@@ -62,13 +54,9 @@ public class Initiator extends Thread {
         }
         catch (Exception e) {
             e.printStackTrace();
-            UiError.crash(parent, e);
+            client.crash(e);
             return;
         }
-
-        StringBuilder sb = new StringBuilder(String.format("The server %s would like to load %d mods.", this.address, neededmods.size()));
-        sb.append("\nAre you okay with this?");
-        FMLClientHandler.instance().showGuiScreen(new UiYesNo(new Transitioner(this), sb.toString()));
 	}
 
     private List<String> getModList() throws ClientProtocolException, IOException {

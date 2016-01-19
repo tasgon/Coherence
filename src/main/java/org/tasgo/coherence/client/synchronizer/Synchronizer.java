@@ -30,43 +30,31 @@ import java.util.List;
  * The main class that synchronizes the client with the server
  */
 @SideOnly(Side.CLIENT)
-public class Synchronizer extends Thread {
-	private static final Logger logger = LogManager.getLogger("Coherence");
+public class Synchronizer extends Task {
 	public String url, address;
 	private File localhost = new File("coherence", "localhost");
 	private String[] currentMods;
 	private boolean updateConfigs;
-    private GuiScreen parent;
-    public UiProgress uiProgress;
-    private File cohereDir;
-    public List<String> modlist;
+	private Client client;
     private List<String> neededmods;
 
-    public Synchronizer(Initiator cli) {
-        url = cli.url;
-        address = cli.serverData.serverIP;
-        cohereDir = cli.cohereDir;
-        modlist = cli.modlist;
-        neededmods = cli.neededmods;
-        updateConfigs = cli.updateConfigs;
-        parent = cli.parent;
+    public Synchronizer(Client parent) {
+		super(parent);
+
+		this.url = parent.url;
+		this.neededmods = cli.neededmods;
     }
 
 	public void run() {
-		uiProgress = new UiProgress(parent, neededmods.size() + 13, true);
 		FMLClientHandler.instance().showGuiScreen(uiProgress);
 		try {
 			downloadNeededMods();
-			getConfigs();
-			moveMods();
-			writeConfigFile();
 
 			uiProgress.info("Restarting Minecraft");
 			MCRelauncher.restartMinecraft();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			UiError.crash(parent, e);
+			client.crash(e);
         }
 	}
 	
@@ -92,62 +80,5 @@ public class Synchronizer extends Thread {
 			fstream.write(stream.toByteArray());
 			fstream.close();
 		}
-	}
-	
-	private void getConfigs() throws IOException {
-		File configZip;
-		File customConfig = new File(cohereDir, "customConfig.zip");
-		File localConfig = new File(localhost, "config");
-		
-		try {
-			FileUtils.moveDirectory(new File("config"), localConfig); //Move config folder
-		}
-		catch (FileExistsException ignored) {}
-		
-		if (updateConfigs || !customConfig.exists()) { //Download the new config if updateConfigs is true
-			uiProgress.info("Downloading configs", 3);
-			
-			configZip = new File(cohereDir, "config.zip");
-			if (configZip.exists())
-				configZip.delete();
-			configZip.createNewFile();
-			
-			FileOutputStream fstream = new FileOutputStream(configZip);
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			POSTGetter.get(url + "/config", stream);
-			stream.writeTo(fstream);
-			fstream.close();
-			stream.close();
-		}
-		else { //Otherwise, use the old configs.
-			uiProgress.info("Using previous configs", 3);
-			configZip = customConfig;
-		}
-		
-		logger.info("Extracting configs", 2);
-		UnzipUtility.unzip(configZip.getPath(), new File(".").getPath());
-		
-		FileUtils.deleteQuietly(Coherence.instance.configFile); //Make sure that Coherence config carries over
-		FileUtils.copyFile(new File(localConfig, Coherence.instance.configFile.getName()), Coherence.instance.configFile);
-	}
-	
-	private void moveMods() throws IOException {
-        uiProgress.info("Moving mods", 5);
-		File modDir = new File("mods"); File curMods = new File(localhost, "mods");
-		FileUtils.copyDirectory(modDir, curMods);
-		File cohereMods = new File(cohereDir, "mods");
-		FileUtils.copyDirectory(cohereMods, modDir);
-	}
-	
-	private void writeConfigFile() {
-		uiProgress.info("Writing configuration file for persistence", 2);
-		Configuration config = new Configuration(Coherence.instance.configFile);
-
-		config.load();
-
-		Property addressProperty = config.get(Configuration.CATEGORY_GENERAL, "connectToServer", "null");
-		addressProperty.set(address);
-			
-		config.save();
 	}
 }
