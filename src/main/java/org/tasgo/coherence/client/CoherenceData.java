@@ -1,5 +1,9 @@
 package org.tasgo.coherence.client;
 
+import org.tasgo.coherence.Coherence;
+import org.tasgo.coherence.common.Version;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class CoherenceData {
@@ -12,8 +16,34 @@ public class CoherenceData {
 	public static CoherenceData getLocalData() {
 		return new CoherenceData("localhost");
 	}
-	
-	public File getMods() {
+
+    public static String getCoherenceURL(String ip) {
+        return "http://" + ip + ":25566";
+    }
+
+    public static String getRemoteVersion(String ip) {
+        String address = getCoherenceURL(ip);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            POSTGetter.get(address, outputStream);
+            String[] remoteData = outputStream.toString().split(" ");
+            return remoteData[1];
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public static boolean guaranteedCompatible(String ip) {
+        return getRemoteVersion(ip) == Coherence.VERSION_STRING;
+    }
+
+    public static boolean maybeCompatible(String ip) {
+        return Version.fromString(getRemoteVersion(ip)).getMCVersion() == Coherence.VERSION.getMCVersion();
+    }
+
+    public File getMods() {
 		return new File(cohereDir, "mods");
 	}
 	

@@ -36,7 +36,7 @@ public class Coherence
 	public boolean debug;
     
     public boolean postCohered = false;
-    public static File configFile;
+    public File configFile;
     public static String modsToKeep;
 
     private static final Logger logger = LogManager.getLogger("Coherence");
