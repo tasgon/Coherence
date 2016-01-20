@@ -16,12 +16,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by Tasgo on 1/19/16.
+ * The class that completes the synchronization with the server.
  */
 public class Completioner extends Task {
     private File localhost = new File("coherence", "localhost");
 
-    public Completioner(Client client, boolean updateConfigs) {
+    public Completioner(Client client) {
         super(client);
     }
     

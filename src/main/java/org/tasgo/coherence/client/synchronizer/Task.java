@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.tasgo.coherence.client.ui.UiProgress;
 
 /**
- * Created by Tasgo on 1/19/16.
+ * Base class for the the different sections of the synchronization.
  */
 public class Task extends Thread {
     protected static final Logger logger = LogManager.getLogger("Coherence Synchronizer");
