@@ -19,10 +19,11 @@ import java.io.IOException;
  * Created by Tasgo on 1/19/16.
  */
 public class Completioner extends Task {
-    private File cohereDir;
-    private boolean updateConfigs;
+    private File localhost = new File("coherence", "localhost");
 
-    public Completioner()
+    public Completioner(Client client, boolean updateConfigs) {
+        super(client);
+    }
     
     public void run() {
         FMLClientHandler.instance().showGuiScreen(uiProgress);
@@ -41,7 +42,7 @@ public class Completioner extends Task {
 
     private void getConfigs() throws IOException {
         File configZip;
-        File customConfig = new File(cohereDir, "customConfig.zip");
+        File customConfig = new File(synchronizationData.cohereDir, "customConfig.zip");
         File localConfig = new File(localhost, "config");
 
         try {
@@ -49,17 +50,17 @@ public class Completioner extends Task {
         }
         catch (FileExistsException ignored) {}
 
-        if (updateConfigs || !customConfig.exists()) { //Download the new config if updateConfigs is true
+        if (synchronizationData.updateConfigs || !customConfig.exists()) { //Download the new config if updateConfigs is true
             uiProgress.info("Downloading configs", 3);
 
-            configZip = new File(cohereDir, "config.zip");
+            configZip = new File(synchronizationData.cohereDir, "config.zip");
             if (configZip.exists())
                 configZip.delete();
             configZip.createNewFile();
 
             FileOutputStream fstream = new FileOutputStream(configZip);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            POSTGetter.get(url + "/config", stream);
+            POSTGetter.get(synchronizationData.url + "/config", stream);
             stream.writeTo(fstream);
             fstream.close();
             stream.close();
@@ -80,7 +81,7 @@ public class Completioner extends Task {
         uiProgress.info("Moving mods", 5);
         File modDir = new File("mods"); File curMods = new File(localhost, "mods");
         FileUtils.copyDirectory(modDir, curMods);
-        File cohereMods = new File(cohereDir, "mods");
+        File cohereMods = new File(synchronizationData.cohereDir, "mods");
         FileUtils.copyDirectory(cohereMods, modDir);
     }
 
@@ -91,7 +92,7 @@ public class Completioner extends Task {
         config.load();
 
         Property addressProperty = config.get(Configuration.CATEGORY_GENERAL, "connectToServer", "null");
-        addressProperty.set(address);
+        addressProperty.set(synchronizationData.serverData.serverIP);
 
         config.save();
     }

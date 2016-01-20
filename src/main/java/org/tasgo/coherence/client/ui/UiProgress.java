@@ -93,4 +93,7 @@ public class UiProgress extends GuiScreen implements ProgressBar {
         return new DecimalFormat(formatting).format(getPercentage() * 100);
     }
 
+    public void reset() {
+        steps = 0;
+    }
 }

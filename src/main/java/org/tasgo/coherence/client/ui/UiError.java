@@ -30,7 +30,7 @@ public class UiError extends GuiScreen
             public void onClick() {
                 FMLClientHandler.instance().showGuiScreen(parent);
             }
-        }, e.getMessage()));
+        }, e.toString()));
     }
 
     /**
