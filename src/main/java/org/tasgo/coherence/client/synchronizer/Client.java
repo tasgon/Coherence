@@ -13,7 +13,7 @@ import org.tasgo.coherence.client.ui.UiYesNoCallback;
 import java.io.File;
 
 /**
- * Created by Tasgo on 1/18/16.
+ * Client class that manages the synchronization with the server.
  */
 public class Client implements UiYesNoCallback {
     private enum Phase {INITIATION, SYNCHRONIZATION, COMPLETION}
@@ -50,19 +50,28 @@ public class Client implements UiYesNoCallback {
                 break;
             case SYNCHRONIZATION:
                 phase = Phase.COMPLETION;
+                uiProgress.reset();
+                new Completioner(this).start();
                 break;
         }
     }
 
     @Override
     public void onClick(boolean result) {
-        if (result) {
-            switch (phase) {
-                case SYNCHRONIZATION:
-                    break;
-                case COMPLETION:
-                    break;
-            }
+        switch (phase) {
+            case SYNCHRONIZATION:
+                if (result) {
+                    uiProgress.reset();
+                    new Synchronizer(this).start();
+                }
+                else {
+                    FMLClientHandler.instance().showGuiScreen(parent);
+                }
+                break;
+            case COMPLETION:
+                synchronizationData.updateConfigs = result;
+                new Completioner(this).start();
+                break;
         }
 
     }

@@ -61,6 +61,7 @@ public class Initiator extends Task {
             logger.info(logList.toString());
             synchronizationData.updateConfigs = true;
             synchronizationData.neededmods = synchronizationData.modlist;
+            return;
         }
 
         List<String> currentMods = Library.listFilenames(modDir, true, true);
