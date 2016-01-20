@@ -2,8 +2,15 @@ package org.tasgo.coherence.client.ui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiListExtended;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiScreenAddServer;
+import net.minecraft.client.gui.GuiScreenServerList;
 import net.minecraft.client.gui.GuiYesNo;
+import net.minecraft.client.gui.GuiYesNoCallback;
+import net.minecraft.client.gui.ServerListEntryLanDetected;
+import net.minecraft.client.gui.ServerListEntryLanScan;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.network.LanServerDetector;
@@ -15,9 +22,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
-import org.tasgo.coherence.client.synchronizer.Initiator;
 import org.tasgo.coherence.client.multiplayer.CoherenceSLEN;
 import org.tasgo.coherence.client.multiplayer.CoherenceSSL;
+import org.tasgo.coherence.client.synchronizer.Client;
 
 import java.io.IOException;
 import java.util.List;
@@ -408,7 +415,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 
     private void connectToServer(ServerData server)
     {
-        new Initiator(this, server).start();
+        new Client(this, server);
         //FMLClientHandler.instance().connectToServer(this, server);
     }
 
