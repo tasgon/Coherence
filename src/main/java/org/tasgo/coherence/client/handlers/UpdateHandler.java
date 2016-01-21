@@ -37,7 +37,7 @@ public class UpdateHandler {
 			for (GithubRelease release : releases) {
 				String ver = release.body.substring(0, release.body.indexOf("\r")).replaceAll("Compatible with: ", "");
 				//System.out.println("Version: " + release.tag_name + " for " + ver);
-				if (ver.equals(MinecraftForge.MC_VERSION)) {
+				if (ver.contains(MinecraftForge.MC_VERSION)) {
 					//System.out.println("Version " + release.tag_name + " is compatible with this version of Minecraft.");
 					if (release.tag_name != Coherence.VERSION_STRING) {
 						System.out.println("A newer version of Coherence has been detected: " + release.tag_name);

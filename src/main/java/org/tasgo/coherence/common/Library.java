@@ -70,7 +70,8 @@ public class Library {
 	 * @return The name of the file from that reference point
 	 */
 	public static String getFileFromReference(File file, File reference) {
-		return file.getAbsolutePath().substring(reference.getAbsolutePath().length() + 1);
+		//return file.getAbsolutePath().substring(reference.getAbsolutePath().length() + 1);
+		return file.getAbsolutePath().replace(reference.getAbsolutePath(), "");
 	}
 	
 	/**List all filenames of an object, compares to FileUtils' File objects

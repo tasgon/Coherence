@@ -53,7 +53,7 @@ public class Synchronizer extends Task {
 			POSTGetter.get(synchronizationData.url + "/mod", map, stream);
 			
 			File modFile = new File(modDir, mod);
-			//new File(modFile.getAbsolutePath().substring(0, modFile.getAbsolutePath().lastIndexOf(File.separator))).mkdirs(); //Old and stupid
+			logger.debug("Saving mod " + mod + " to file " + modFile.getAbsolutePath());
 			new File(FilenameUtils.getFullPath(modFile.getAbsolutePath())).mkdirs();
 			FileOutputStream fstream = new FileOutputStream(modFile);
 			fstream.write(stream.toByteArray());
