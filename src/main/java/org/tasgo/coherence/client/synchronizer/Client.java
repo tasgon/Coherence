@@ -40,18 +40,20 @@ public class Client implements UiYesNoCallback {
     }
 
     public void advance() {
+        uiProgress.reset();
         switch (phase) {
             case INITIATION:
                 phase = Phase.SYNCHRONIZATION;
                 StringBuilder sb = new StringBuilder(String.format("The server %s would like to load %d mods.",
-                        synchronizationData.address, synchronizationData.neededmods.size()));
+                        synchronizationData.serverData.serverIP, synchronizationData.neededmods.size()));
                 sb.append("\nAre you okay with this?");
                 FMLClientHandler.instance().showGuiScreen(new UiYesNo(this, sb.toString()));
                 break;
             case SYNCHRONIZATION:
                 phase = Phase.COMPLETION;
-                uiProgress.reset();
-                new Completioner(this).start();
+                if (!synchronizationData.neededmods.isEmpty() && synchronizationData.neededmods == null) {
+                    FMLClientHandler.instance().showGuiScreen(new UiYesNo(this, "Would you like to update the configuration files?"));
+                }
                 break;
         }
     }
@@ -61,7 +63,7 @@ public class Client implements UiYesNoCallback {
         switch (phase) {
             case SYNCHRONIZATION:
                 if (result) {
-                    uiProgress.reset();
+                    uiProgress.totalSteps = synchronizationData.neededmods.size() + 1;
                     new Synchronizer(this).start();
                 }
                 else {

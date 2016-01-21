@@ -3,10 +3,10 @@ package org.tasgo.coherence.client.synchronizer;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.tasgo.coherence.Coherence;
-import org.tasgo.coherence.client.MCRelauncher;
 import org.tasgo.coherence.client.POSTGetter;
 import org.tasgo.coherence.ziputils.UnzipUtility;
 
@@ -33,7 +33,8 @@ public class Completioner extends Task {
             writeConfigFile();
 
             uiProgress.info("Restarting Minecraft");
-            MCRelauncher.restartMinecraft();
+            FMLCommonHandler.instance().exitJava(0, false);
+            //MCRelauncher.restartMinecraft();
         }
         catch (Exception e) {
             client.crash(e);

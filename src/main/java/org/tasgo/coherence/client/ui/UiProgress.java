@@ -16,9 +16,9 @@ public class UiProgress extends GuiScreen implements ProgressBar {
     private static final Logger logger = LogManager.getLogger("Coherence Loader");
 
     GuiScreen parent;
-    private int totalSteps;
+    public int totalSteps;
     private boolean autoLog = false;
-    private int steps = 0;
+    public int steps = 0;
     private String message = "";
 
     public UiProgress(GuiScreen parent, int totalSteps, boolean autoLog) {

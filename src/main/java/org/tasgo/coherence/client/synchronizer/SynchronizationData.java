@@ -14,7 +14,7 @@ public class SynchronizationData {
     public String address, url;
     public List<String> modlist;
     public List<String> neededmods;
-    public boolean updateConfigs;
+    public Boolean updateConfigs = null;
 
     public void printData() {
         System.out.println("Coherence directory: " + (cohereDir == null ? "null" : cohereDir.getAbsolutePath()));
