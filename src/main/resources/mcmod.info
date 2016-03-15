@@ -1,12 +1,12 @@
 [
 {
-  "modid": "coherence",
+  "modid": "Coherence",
   "name": "Coherence",
   "description": "Synchronizes mods between client and server",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
+  "url": "https://github.com/tasgoon/Coherence",
+  "updateUrl": "https://github.com/tasgoon/Coherence/releases",
   "authorList": ["Tasgo"],
   "credits": "Tasgo",
   "logoFile": "",
