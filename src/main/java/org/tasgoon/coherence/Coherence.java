@@ -29,7 +29,7 @@ public class Coherence
 	public static Coherence instance;
 	
     public static final String MODID = "Coherence";
-    public static final String VERSION_STRING = "1.8b03";
+    public static final String VERSION_STRING = "1.8a01";
     public static final Version VERSION = Version.fromString(VERSION_STRING);
     public static final File CONFIG_FILE = new File("coherence", "Coherence.cfg");
 
