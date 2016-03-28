@@ -18,7 +18,7 @@ public class CoherenceData {
 	}
 
     public static String getCoherenceURL(String ip) {
-        return "http://" + ip + ":2" + Coherence.clientPort;
+        return "http://" + ip + ":" + Coherence.clientPort;
     }
 
     public static String getRemoteVersion(String ip) {
