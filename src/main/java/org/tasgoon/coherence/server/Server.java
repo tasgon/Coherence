@@ -13,9 +13,10 @@ import org.apache.logging.log4j.Logger;
 @SideOnly(Side.SERVER)
 public class Server {
 	private static final Logger logger = LogManager.getLogger("Coherence");
-	public final int port = 25566;
+	public final int port;
 	
-	public Server() throws IOException {
+	public Server(int p) throws IOException {
+		port = p;
 		InetSocketAddress socket = new InetSocketAddress(port);
 		HttpServer server = HttpServer.create(socket, 0);
 		

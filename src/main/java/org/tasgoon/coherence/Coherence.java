@@ -33,6 +33,8 @@ public class Coherence
     public static final Version VERSION = Version.fromString(VERSION_STRING);
     public static final File CONFIG_FILE = new File("coherence", "Coherence.cfg");
 
+    public static int clientPort = 25566;
+
     public Configuration config;
     public boolean connectOnStart;
 	public boolean debug;
@@ -70,6 +72,11 @@ public class Coherence
     			+ "\nUsed mainly for testing purposes.";
     	debug = debugProperty.getBoolean();
     	
+    	Property portProperty = config.get(Configuration.CATEGORY_GENERAL, "port", 25566);
+    	portProperty.comment = "This tells Coherence what port it should use."
+    			+ "\nChange at your own risk.";
+    	clientPort = portProperty.getInt();
+
     	if (!address.equals("null")) {
     		new PostCohere();
     		postCohered = true;
@@ -99,7 +106,11 @@ public class Coherence
     @SideOnly(Side.SERVER)
     public void postInit(FMLPostInitializationEvent event) throws IOException
     {
-    	new Server();
+    	config = new Configuration(CONFIG_FILE);
+    	Property portProperty = config.get(Configuration.CATEGORY_GENERAL, "port", 25566);
+    	portProperty.comment = "This tells Coherence what port it should use."
+    			+ "\nChange at your own risk.";
+    	new Server(portProperty.getInt());
     }
     //=========================================END SERVER SIDE CODE=================================================================
 }
