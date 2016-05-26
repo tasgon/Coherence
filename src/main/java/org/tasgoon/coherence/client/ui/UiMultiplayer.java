@@ -2,19 +2,11 @@ package org.tasgoon.coherence.client.ui;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenAddServer;
-import net.minecraft.client.gui.GuiScreenServerList;
-import net.minecraft.client.gui.GuiYesNo;
-import net.minecraft.client.gui.GuiYesNoCallback;
-import net.minecraft.client.gui.ServerListEntryLanDetected;
-import net.minecraft.client.gui.ServerListEntryLanScan;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.network.LanServerDetector;
-import net.minecraft.client.network.OldServerPinger;
+import net.minecraft.client.network.ServerPinger;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,7 +29,7 @@ import java.util.List;
 public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
 {
     private static final Logger logger = LogManager.getLogger();
-    private final OldServerPinger oldServerPinger = new OldServerPinger();
+    private final ServerPinger oldServerPinger = new ServerPinger();
     private GuiScreen parentScreen;
     private CoherenceSSL serverListSelector;
     private ServerList savedServerList;
@@ -439,7 +431,7 @@ public class UiMultiplayer extends GuiScreen implements GuiYesNoCallback
         }
     }
 
-    public OldServerPinger getOldServerPinger()
+    public ServerPinger getOldServerPinger()
     {
         return this.oldServerPinger;
     }

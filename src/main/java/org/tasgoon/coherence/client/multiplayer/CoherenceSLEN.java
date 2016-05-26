@@ -14,8 +14,8 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,9 +60,9 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected)
     {
-        if (!this.serverData.field_78841_f)
+        if (!this.serverData.pinged)
         {
-            this.serverData.field_78841_f = true;
+            this.serverData.pinged = true;
             this.serverData.pingToServer = -2L;
             this.serverData.serverMOTD = "";
             this.serverData.populationInfo = "";
@@ -76,12 +76,12 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
                     catch (UnknownHostException var2)
                     {
                         CoherenceSLEN.this.serverData.pingToServer = -1L;
-                        CoherenceSLEN.this.serverData.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t resolve hostname";
+                        CoherenceSLEN.this.serverData.serverMOTD = TextFormatting.DARK_RED + "Can\'t resolve hostname";
                     }
                     catch (Exception var3)
                     {
                         CoherenceSLEN.this.serverData.pingToServer = -1L;
-                        CoherenceSLEN.this.serverData.serverMOTD = EnumChatFormatting.DARK_RED + "Can\'t connect to server.";
+                        CoherenceSLEN.this.serverData.serverMOTD = TextFormatting.DARK_RED + "Can\'t connect to server.";
                     }
                 }
             });
@@ -98,7 +98,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
             this.mc.fontRendererObj.drawString((String)list.get(i), x + 32 + 3, y + 12 + this.mc.fontRendererObj.FONT_HEIGHT * i, 8421504);
         }
 
-        String s2 = flag2 ? EnumChatFormatting.DARK_RED + this.serverData.gameVersion : this.serverData.populationInfo;
+        String s2 = flag2 ? TextFormatting.DARK_RED + this.serverData.gameVersion : this.serverData.populationInfo;
         int j = this.mc.fontRendererObj.getStringWidth(s2);
         this.mc.fontRendererObj.drawString(s2, x + listWidth - j - 15 - 2, y + 1, 8421504);
         int k = 0;
@@ -112,7 +112,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
             s1 = flag ? "Client out of date!" : "Server out of date!";
             s = this.serverData.playerList;
         }
-        else if (this.serverData.field_78841_f && this.serverData.pingToServer != -2L)
+        else if (this.serverData.pinged && this.serverData.pingToServer != -2L)
         {
             if (this.serverData.pingToServer < 0L)
             {
@@ -163,7 +163,7 @@ public class CoherenceSLEN implements GuiListExtended.IGuiListEntry
         }
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(Gui.icons);
+        this.mc.getTextureManager().bindTexture(Gui.ICONS);
         Gui.drawModalRectWithCustomSizedTexture(x + listWidth - 15, y, (float)(k * 10), (float)(176 + l * 8), 10, 8, 256.0F, 256.0F);
 
         if (this.serverData.getBase64EncodedIconData() != null && !this.serverData.getBase64EncodedIconData().equals(this.field_148299_g))

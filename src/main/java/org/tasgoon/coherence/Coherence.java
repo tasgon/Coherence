@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
-@Mod(modid = Coherence.MODID, version = Coherence.VERSION_STRING, acceptableRemoteVersions = "*", guiFactory = "UiConfigFactory")
+@Mod(modid = Coherence.MODID, version = Coherence.VERSION_STRING, acceptableRemoteVersions = "*", guiFactory = "org.tasgoon.coherence.client.ui.UiConfigFactory")
 public class Coherence
 {
 	@Instance("Coherence")
@@ -58,23 +58,23 @@ public class Coherence
         config = new Configuration(CONFIG_FILE);
     	
     	Property connectProperty = config.get(Configuration.CATEGORY_GENERAL, "connectOnStart", false);
-    	connectProperty.comment = "Set this to true if you want to connect back to the server after cohering is done and Minecraft loads again."
-    			+ "\nThis is not quite ready yet, so enable this at your own risk.";
+    	connectProperty.setComment("Set this to true if you want to connect back to the server after cohering is done and Minecraft loads again."
+    			+ "\nThis is not quite ready yet, so enable this at your own risk.");
     	connectOnStart = connectProperty.getBoolean();
     	
     	Property addressProperty = config.get(Configuration.CATEGORY_GENERAL, "connectToServer", "null");
-    	addressProperty.comment = "This tells Coherence what server to connect to on start if connectOnStart is true, and is also for persistence."
-    			+ "\nDon't touch this, unless you want to break a lot of things.";
+    	addressProperty.setComment("This tells Coherence what server to connect to on start if connectOnStart is true, and is also for persistence."
+    			+ "\nDon't touch this, unless you want to break a lot of things.");
     	address = addressProperty.getString(); addressProperty.set("null");
     	
     	Property debugProperty = config.get(Configuration.CATEGORY_GENERAL, "debug", false);
-    	debugProperty.comment = "This tells Coherence if it should turn on advanced debugging features."
-    			+ "\nUsed mainly for testing purposes.";
+    	debugProperty.setComment("This tells Coherence if it should turn on advanced debugging features."
+    			+ "\nUsed mainly for testing purposes.");
     	debug = debugProperty.getBoolean();
     	
     	Property portProperty = config.get(Configuration.CATEGORY_GENERAL, "port", 25566);
-    	portProperty.comment = "This tells Coherence what port it should use."
-    			+ "\nChange at your own risk.";
+    	portProperty.setComment("This tells Coherence what port it should use."
+    			+ "\nChange at your own risk.");
     	clientPort = portProperty.getInt();
 
     	if (!address.equals("null")) {
@@ -108,8 +108,8 @@ public class Coherence
     {
     	config = new Configuration(CONFIG_FILE);
     	Property portProperty = config.get(Configuration.CATEGORY_GENERAL, "port", 25566);
-    	portProperty.comment = "This tells Coherence what port it should use."
-    			+ "\nChange at your own risk.";
+    	portProperty.setComment("This tells Coherence what port it should use."
+    			+ "\nChange at your own risk.");
     	new Server(portProperty.getInt());
     }
     //=========================================END SERVER SIDE CODE=================================================================
