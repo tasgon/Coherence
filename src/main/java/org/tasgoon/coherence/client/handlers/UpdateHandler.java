@@ -22,8 +22,8 @@ public class UpdateHandler {
 	@SideOnly(Side.CLIENT)
 	public void checkMainMenu(GuiOpenEvent event) {
 		String update = getUpdate();
-		if (event.gui instanceof GuiMainMenu && update != null) {
-			event.gui = new UiUpdate(event.gui, update);
+		if (event.getGui() instanceof GuiMainMenu && update != null) {
+			event.setGui(new UiUpdate(event.getGui(), update));
 			MinecraftForge.EVENT_BUS.unregister(this);
 		}
 	}

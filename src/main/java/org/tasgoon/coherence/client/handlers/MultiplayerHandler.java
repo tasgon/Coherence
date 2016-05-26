@@ -16,7 +16,7 @@ public class MultiplayerHandler {
     @SideOnly(Side.CLIENT)
     public void checkMultiplayer(GuiOpenEvent event) {
         System.out.println("Checking for multiplayer.");
-        if (event.gui instanceof GuiMultiplayer)
-            event.gui = new UiMultiplayer(new GuiMainMenu());
+        if (event.getGui() instanceof GuiMultiplayer)
+            event.setGui(new UiMultiplayer(new GuiMainMenu()));
     }
 }
